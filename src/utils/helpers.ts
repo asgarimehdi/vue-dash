@@ -23,16 +23,16 @@ export function maskIP(value: string): string {
  * Format a MAC address with colons as the user types (MAC Masking)
  */
 export function maskMAC(value: string): string {
-  const hex = value.replace(/[^0-9a-fA-F]/g, '')
+  const hex = value.replace(/[^0-9a-fA-F]/g, '').toUpperCase()
   const parts: string[] = []
-  for (let i = 0; i < hex.length && parts.length < 6; i++) {
+  for (const ch of hex) {
     if (!parts[parts.length - 1]) {
       parts.push('')
     }
     if (parts[parts.length - 1].length < 2) {
-      parts[parts.length - 1] += hex[i].toUpperCase()
-    } else {
-      parts.push(hex[i].toUpperCase())
+      parts[parts.length - 1] += ch
+    } else if (parts.length < 6) {
+      parts.push(ch)
     }
   }
   return parts.join(':')
@@ -139,9 +139,9 @@ export function isoToJalali(isoStr: string | null): string {
  */
 export function formatJalali(dateStr: string | null): string {
   if (!dateStr) return '-'
-  const iso = parseIsoDate(dateStr)
-  if (!iso) {
-    // شاید خودش شمسی است
+
+  // اگر خودش شمسی است (سال 1200-1500)
+  if (isJalaliDate(dateStr)) {
     const parsed = parseJalaliDate(dateStr)
     if (parsed) {
       const mm = String(parsed.jm).padStart(2, '0')
@@ -150,6 +150,10 @@ export function formatJalali(dateStr: string | null): string {
     }
     return dateStr
   }
+
+  // اگر میلادی است تبدیل به شمسی کن
+  const iso = parseIsoDate(dateStr)
+  if (!iso) return dateStr
   try {
     const jal = jalaali.toJalaali(iso.year, iso.month, iso.day)
     const mm = String(jal.jm).padStart(2, '0')

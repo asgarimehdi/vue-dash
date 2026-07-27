@@ -25,5 +25,8 @@ jobs:
       - name: TypeScript check
         run: npx vue-tsc --noEmit
 
+      - name: Run tests
+        run: npm test
+
       - name: Build Vue app
         run: npm run build

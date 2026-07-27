@@ -2,8 +2,8 @@
   "name": "h-dashboard",
   "private": true,
   "version": "1.0.0",
-  "type": "module",
   "main": "electron/main.cjs",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "dev:electron": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
@@ -12,7 +12,10 @@
     "preview": "vite preview",
     "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
     "electron:build": "npm run build && electron-builder",
-    "electron:start": "electron ."
+    "electron:start": "electron .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.21",
@@ -34,15 +37,18 @@
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.13.2",
     "@vitejs/plugin-vue": "^6.0.7",
+    "@vue/test-utils": "^2.4.11",
     "@vue/tsconfig": "^0.9.1",
     "concurrently": "^10.0.4",
     "daisyui": "^5.7.4",
     "electron": "^43.2.0",
     "electron-builder": "^26.15.3",
+    "jsdom": "^30.0.0",
     "shadcn-vue": "^2.8.0",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
     "vite": "^8.1.1",
+    "vitest": "^4.1.10",
     "vue-tsc": "^3.3.5",
     "wait-on": "^9.1.0"
   }
