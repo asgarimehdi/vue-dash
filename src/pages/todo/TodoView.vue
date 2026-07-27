@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useTodoStore } from '@/stores/todo'
+import { useHardwareStore } from '@/stores/hardware'
+import { formatJalali } from '@/utils/helpers'
+import JalaliDatePicker from '@/components/JalaliDatePicker.vue'
 import type { TodoFormData } from '@/types/api'
 
 const store = useTodoStore()
+const unitStore = useHardwareStore()
 
 const showModal = ref(false)
 const editingId = ref<number | null>(null)
@@ -17,7 +21,10 @@ const form = ref<TodoFormData>({
   unit_id: null,
 })
 
-onMounted(() => load())
+onMounted(() => {
+  load()
+  unitStore.fetchList()
+})
 
 async function load() {
   const params: any = {}
@@ -41,8 +48,8 @@ function openEdit(todo: any) {
   editingId.value = todo.id
   form.value = {
     title: todo.title,
-    start_at: todo.start_at?.split('T')[0] || '',
-    end_at: todo.end_at?.split('T')[0] || '',
+    start_at: todo.start_at || '',
+    end_at: todo.end_at || '',
     unit_id: todo.unit_id,
   }
   showModal.value = true
@@ -79,10 +86,9 @@ const completedCount = computed(() => store.items.filter(i => i.is_completed).le
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
       <div>
         <h2 class="text-2xl font-bold">وظایف (Todo)</h2>
-        <div class="text-sm opacity-60 mt-1">
-          <span class="text-warning">{{ pendingCount }} در انتظار</span>
-          &nbsp;|&nbsp;
-          <span class="text-success">{{ completedCount }} تکمیل</span>
+        <div class="flex gap-3 text-sm opacity-60 mt-1">
+          <span class="text-warning font-medium">{{ pendingCount }} در انتظار</span>
+          <span class="text-success font-medium">{{ completedCount }} تکمیل</span>
         </div>
       </div>
       <button @click="openCreate" class="btn btn-primary">+ وظیفه جدید</button>
@@ -121,10 +127,10 @@ const completedCount = computed(() => store.items.filter(i => i.is_completed).le
                 {{ todo.title }}
               </p>
 
-              <!-- Meta -->
+              <!-- Meta with Jalali dates -->
               <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs opacity-60 mt-1">
-                <span v-if="todo.start_at">📅 شروع: {{ new Date(todo.start_at).toLocaleDateString('fa-IR') }}</span>
-                <span v-if="todo.end_at">🔚 پایان: {{ new Date(todo.end_at).toLocaleDateString('fa-IR') }}</span>
+                <span v-if="todo.start_at">📅 شروع: {{ formatJalali(todo.start_at) }}</span>
+                <span v-if="todo.end_at">🔚 پایان: {{ formatJalali(todo.end_at) }}</span>
                 <span v-if="todo.unit">🏢 {{ todo.unit.name }}</span>
               </div>
             </div>
@@ -155,11 +161,11 @@ const completedCount = computed(() => store.items.filter(i => i.is_completed).le
           <div class="grid grid-cols-2 gap-3">
             <div class="form-control">
               <label class="label"><span class="label-text">تاریخ شروع *</span></label>
-              <input v-model="form.start_at" type="date" required class="input input-bordered" />
+              <JalaliDatePicker v-model="form.start_at" />
             </div>
             <div class="form-control">
               <label class="label"><span class="label-text">تاریخ پایان</span></label>
-              <input v-model="form.end_at" type="date" class="input input-bordered" />
+              <JalaliDatePicker v-model="form.end_at" />
             </div>
           </div>
           <div class="modal-action">

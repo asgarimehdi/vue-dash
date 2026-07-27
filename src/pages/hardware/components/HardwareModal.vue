@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, reactive, watch, onMounted } from 'vue'
 import { useHardwareStore } from '@/stores/hardware'
-import { maskIP, maskMAC, toDateInputValue } from '@/utils/helpers'
-import type { HardwareFormData, HardwareType, NetType, Hardware } from '@/types/api'
+import { maskIP, maskMAC } from '@/utils/helpers'
+import JalaliDatePicker from '@/components/JalaliDatePicker.vue'
+import type { HardwareFormData } from '@/types/api'
 
 const props = defineProps<{
   editId: number | null
@@ -59,7 +60,7 @@ onMounted(async () => {
       form.hdd = item.hdd
       form.comments = item.comments
       form.mark = item.mark
-      form.clean_at = toDateInputValue(item.clean_at)
+      form.clean_at = item.clean_at || ''
       form.person_id = item.person_id
     } catch {
       error.value = 'خطا در بارگذاری اطلاعات'
@@ -203,7 +204,7 @@ async function handleSubmit() {
           <!-- Clean At -->
           <div class="form-control">
             <label class="label py-1"><span class="label-text">تاریخ پاک‌سازی</span></label>
-            <input v-model="form.clean_at" type="date" class="input input-bordered input-sm" />
+            <JalaliDatePicker v-model="form.clean_at" />
           </div>
 
           <!-- Mark -->

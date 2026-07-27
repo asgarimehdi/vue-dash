@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useHardwareStore } from '@/stores/hardware'
-import { HARDWARE_TYPE_LABELS, formatDate } from '@/utils/helpers'
+import { HARDWARE_TYPE_LABELS } from '@/utils/helpers'
 
 const store = useHardwareStore()
 
