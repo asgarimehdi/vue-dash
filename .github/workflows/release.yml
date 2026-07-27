@@ -1,0 +1,105 @@
+name: Build and Release Electron App
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: linux
+          - os: windows-latest
+            target: windows
+          - os: macos-latest
+            target: mac
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install Linux dependencies
+        if: matrix.target == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dpkg-dev rpm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Vue
+        run: npm run build
+
+      - name: Build Electron (${{ matrix.target }})
+        run: npm run electron:build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: installer-${{ matrix.target }}
+          path: release/
+          retention-days: 7
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+          path: installers
+
+      - name: List installers
+        run: |
+          echo "## 📦 Files to release" >> $GITHUB_STEP_SUMMARY
+          find installers -type f \( -name "*.exe" -o -name "*.dmg" -o -name "*.AppImage" -o -name "*.deb" -o -name "*.rpm" \) | sort >> $GITHUB_STEP_SUMMARY
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: H-Dashboard ${{ github.ref_name }}
+          body: |
+            ## 🚀 H-Dashboard ${{ github.ref_name }}
+
+            📥 **دانلود اینستالر:**
+
+            | پلتفرم | فایل |
+            |--------|------|
+            | 🪟 Windows | `H-Dashboard-Setup-${{ github.ref_name }}.exe` |
+            | 🍎 macOS (Intel & Apple Silicon) | `H-Dashboard-${{ github.ref_name }}.dmg` |
+            | 🐧 Linux (AppImage) | `H-Dashboard-${{ github.ref_name }}.AppImage` |
+            | 🐧 Linux (Debian) | `h-dashboard_${{ github.ref_name }}_amd64.deb` |
+            | 🐧 Linux (RPM) | `h-dashboard_${{ github.ref_name }}_x86_64.rpm` |
+
+            ### 📝 تغییرات
+            برای مشاهده لیست کامل تغییرات به [commit history](https://github.com/${{ github.repository }}/commits/${{ github.ref_name }}) مراجعه کنید.
+
+            ### 🔧 نحوه نصب
+            1. فایل مربوط به سیستم‌عامل خود را دانلود کنید
+            2. روی فایل دوبار کلیک کنید
+            3. نصب را انجام دهید
+            4. برنامه H-Dashboard را اجرا کنید
+            5. آدرس API سرور لاراول خود را در تنظیمات وارد کنید
+          files: installers/
+          generate_release_notes: true
