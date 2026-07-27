@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import DatePicker from 'vue3-persian-datetime-picker'
-import { isoToJalali } from '@/utils/helpers'
+import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
 
 const props = defineProps<{
   modelValue: string
@@ -11,26 +9,60 @@ const emit = defineEmits<{
   (e: 'update:modelValue', val: string): void
 }>()
 
-const pickerValue = computed({
-  get: () => {
-    if (!props.modelValue) return ''
-    if (props.modelValue.includes('-')) {
-      return isoToJalali(props.modelValue)
+const inputRef = ref<HTMLInputElement | null>(null)
+const internalValue = ref(props.modelValue || '')
+const cssLink = ref<HTMLLinkElement | null>(null)
+
+watch(() => props.modelValue, (val) => {
+  internalValue.value = val || ''
+})
+
+watch(internalValue, (val) => {
+  emit('update:modelValue', val)
+})
+
+onMounted(async () => {
+  // Dynamically add CSS from CDN (avoids build issues)
+  cssLink.value = document.createElement('link')
+  cssLink.value.rel = 'stylesheet'
+  cssLink.value.href = 'https://unpkg.com/jalalidatepicker@0.6.0/dist/jalaliDatepicker.css'
+  document.head.appendChild(cssLink.value)
+
+  const mod = await import('jalalidatepicker')
+
+  if (inputRef.value) {
+    inputRef.value.setAttribute('data-jdp', '')
+    inputRef.value.setAttribute('data-jdp-time', 'false')
+    inputRef.value.setAttribute('data-jdp-format', 'YYYY/MM/DD')
+
+    if (typeof (mod as any).jalaliDatepicker?.startWatch === 'function') {
+      ;(mod as any).jalaliDatepicker.startWatch()
     }
-    return props.modelValue
-  },
-  set: (val: string) => {
-    emit('update:modelValue', val)
-  },
+
+    inputRef.value.addEventListener('change', () => {
+      if (inputRef.value) internalValue.value = inputRef.value.value
+    })
+
+    inputRef.value.addEventListener('jdp:change', (e: any) => {
+      internalValue.value = e.detail?.value || e.target?.value || ''
+    })
+  }
+})
+
+onBeforeUnmount(() => {
+  if (cssLink.value?.parentNode) {
+    cssLink.value.parentNode.removeChild(cssLink.value)
+  }
 })
 </script>
 
 <template>
-  <DatePicker
-    v-model="pickerValue"
-    format="jYYYY/jMM/jDD"
-    display-format="jYYYY/jMM/jDD"
-    input-class="input input-bordered w-full"
+  <input
+    ref="inputRef"
+    :value="internalValue"
+    @input="internalValue = ($event.target as HTMLInputElement).value"
+    class="input input-bordered w-full cursor-pointer"
     placeholder="انتخاب تاریخ"
+    readonly
   />
 </template>

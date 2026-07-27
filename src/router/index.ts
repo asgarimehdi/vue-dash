@@ -28,6 +28,12 @@ const router = createRouter({
       component: () => import('@/pages/todo/TodoView.vue'),
       meta: { requiresAuth: true, title: 'وظایف' },
     },
+    {
+      path: '/calendar',
+      name: 'calendar',
+      component: () => import('@/pages/calendar/CalendarView.vue'),
+      meta: { requiresAuth: true, title: 'تقویم' },
+    },
   ],
 })
 

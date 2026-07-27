@@ -156,6 +156,32 @@ export interface BulkAction {
   ids: number[]
 }
 
+/* ===== Ticket ===== */
+export type TicketPriority = 'urgent' | 'normal' | 'low'
+export type TicketStatus = 'created' | 'forwarded' | 'accepted' | 'completed' | 'rejected'
+
+export interface Ticket {
+  id: number
+  ticket_code: string
+  user_id: number
+  unit_id: number
+  subject: string
+  content: string
+  priority: TicketPriority
+  status: TicketStatus
+  deadline?: string
+  current_assignee_id?: number
+  accepted_at?: string
+  completed_at?: string
+  created_at: string
+  updated_at: string
+  unit?: { id: number; name: string }
+  user?: { id: number; n_code: string }
+  assignee?: { id: number; n_code: string }
+  status_name?: string
+  waiting_duration?: { text: string; class: string }
+}
+
 /* ===== Todo ===== */
 export interface Todo {
   id: number
