@@ -42,9 +42,8 @@ const eventColors = {
 
 async function loadEvents(startStr?: string, endStr?: string) {
   await todoStore.fetchList()
-  // If ticketStore exists, load tickets too
   try {
-    await ticketStore.fetchTickets()
+    await ticketStore.fetchAll()
   } catch {
     // Ticket store might not exist, do nothing
   }

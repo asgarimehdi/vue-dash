@@ -40,6 +40,24 @@ const router = createRouter({
       component: () => import('@/pages/units/UnitsView.vue'),
       meta: { requiresAuth: true, title: 'مراکز' },
     },
+    {
+      path: '/tickets',
+      name: 'tickets',
+      component: () => import('@/pages/tickets/TicketsView.vue'),
+      meta: { requiresAuth: true, title: 'تیکت‌ها' },
+    },
+    {
+      path: '/tickets/new',
+      name: 'tickets-new',
+      component: () => import('@/pages/tickets/TicketNewView.vue'),
+      meta: { requiresAuth: true, title: 'تیکت جدید' },
+    },
+    {
+      path: '/tickets/:id',
+      name: 'ticket-detail',
+      component: () => import('@/pages/tickets/TicketDetailView.vue'),
+      meta: { requiresAuth: true, title: 'جزئیات تیکت' },
+    },
   ],
 })
 

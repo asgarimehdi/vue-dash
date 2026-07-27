@@ -180,6 +180,15 @@ export interface Ticket {
   assignee?: { id: number; n_code: string }
   status_name?: string
   waiting_duration?: { text: string; class: string }
+  activities?: TicketActivity[]
+}
+
+export interface TicketActivity {
+  id: number
+  description: string
+  user_id?: number
+  created_at: string
+  user?: { id: number; n_code: string }
 }
 
 /* ===== Unit / Organization ===== */

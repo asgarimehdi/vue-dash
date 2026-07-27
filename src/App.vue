@@ -7,6 +7,7 @@ const auth = useAuthStore()
 const navItems = [
   { name: 'مدیریت سخت‌افزار', path: '/', icon: '🖥️' },
   { name: 'مراکز', path: '/units', icon: '🏗️' },
+  { name: 'تیکت‌ها', path: '/tickets', icon: '🎫' },
   { name: 'تقویم', path: '/calendar', icon: '📅' },
   { name: 'وظایف (Todo)', path: '/todos', icon: '✅' },
   { name: 'چت هوش مصنوعی', path: '/ai-chat', icon: '🤖' },
