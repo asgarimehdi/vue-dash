@@ -232,6 +232,23 @@ function editEvent(id: number) {
   showModal.value = true
 }
 
+function closeModal() {
+  showModal.value = false
+  resetForm()
+}
+
+function resetForm() {
+  editingId.value = null
+  modalMode.value = 'create'
+  formTitle.value = ''
+  formStartDate.value = ''
+  formStartTime.value = ''
+  formEndDate.value = ''
+  formEndTime.value = ''
+  formError.value = ''
+  saving.value = false
+}
+
 async function saveTodo() {
   if (!formTitle.value.trim() || !formStartDate.value) {
     formError.value = 'عنوان و تاریخ شروع الزامی است'
@@ -275,6 +292,7 @@ async function saveTodo() {
     }
 
     showModal.value = false
+    resetForm()
     await refreshEvents()
   } catch (e: any) {
     formError.value = e?.response?.data?.message || e?.response?.data?.error || 'خطا در ذخیره‌سازی'
@@ -289,6 +307,7 @@ async function deleteTodo() {
   if (!confirm('آیا از حذف این وظیفه اطمینان دارید؟')) return
   await todoStore.remove(editingId.value)
   showModal.value = false
+  resetForm()
   await refreshEvents()
 }
 
@@ -344,7 +363,7 @@ onBeforeUnmount(() => {
     </div>
 
     <!-- Create/Edit Modal -->
-    <div v-if="showModal" class="modal modal-open" @click.self="showModal = false">
+    <div v-if="showModal" class="modal modal-open" @click.self="closeModal">
       <div class="modal-box max-w-md">
         <h3 class="font-bold text-lg mb-4">
           {{ modalMode === 'create' ? 'تسک جدید' : 'ویرایش تسک' }}
@@ -382,7 +401,7 @@ onBeforeUnmount(() => {
               <span v-if="saving" class="loading loading-spinner loading-sm"></span>
               {{ saving ? 'در حال ذخیره...' : modalMode === 'create' ? 'ذخیره' : 'بروزرسانی' }}
             </button>
-            <button type="button" @click="showModal = false" class="btn btn-ghost">انصراف</button>
+            <button type="button" @click="closeModal" class="btn btn-ghost">انصراف</button>
           </div>
         </form>
       </div>
