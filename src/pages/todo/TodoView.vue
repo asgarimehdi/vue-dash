@@ -2,7 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useTodoStore } from '@/stores/todo'
 import { useHardwareStore } from '@/stores/hardware'
-import { formatJalali } from '@/utils/helpers'
+import { formatJalali, jalaliToIso, isJalaliDate } from '@/utils/helpers'
 import JalaliDatePicker from '@/components/JalaliDatePicker.vue'
 import type { TodoFormData } from '@/types/api'
 
@@ -56,10 +56,19 @@ function openEdit(todo: any) {
 }
 
 async function save() {
+  // Convert Jalali dates to Gregorian before sending to API
+  const payload = { ...form.value }
+  if (payload.start_at && isJalaliDate(payload.start_at)) {
+    payload.start_at = jalaliToIso(payload.start_at)
+  }
+  if (payload.end_at && isJalaliDate(payload.end_at)) {
+    payload.end_at = jalaliToIso(payload.end_at)
+  }
+
   if (editingId.value) {
-    await store.update(editingId.value, form.value)
+    await store.update(editingId.value, payload)
   } else {
-    await store.create(form.value)
+    await store.create(payload)
   }
   showModal.value = false
   await load()

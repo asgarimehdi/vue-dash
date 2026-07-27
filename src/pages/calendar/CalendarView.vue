@@ -3,7 +3,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useTodoStore } from '@/stores/todo'
 import { useHardwareStore } from '@/stores/hardware'
 import { useTicketStore } from '@/stores/TicketStore'
-import { formatJalali, isoToJalali } from '@/utils/helpers'
+import { formatJalali, isoToJalali, jalaliToIso, isJalaliDate } from '@/utils/helpers'
 import JalaliDatePicker from '@/components/JalaliDatePicker.vue'
 import type { Todo } from '@/types/api'
 import { Calendar } from '@fullcalendar/core'
@@ -234,9 +234,16 @@ function editEvent(id: number) {
 async function saveTodo() {
   if (!formTitle.value.trim() || !formStartDate.value) return
 
-  // We send the jalali date as-is; the backend handles it
-  const startAt = formStartDate.value
-  const endAt = formEndDate.value || formStartDate.value
+  // Convert Jalali dates to Gregorian ISO before sending to API
+  const startAt = isJalaliDate(formStartDate.value)
+    ? `${jalaliToIso(formStartDate.value)}T${formStartTime.value || '00:00'}:00`
+    : formStartDate.value
+  
+  const endAt = formEndDate.value
+    ? isJalaliDate(formEndDate.value)
+      ? `${jalaliToIso(formEndDate.value)}T${formEndTime.value || '00:00'}:00`
+      : formEndDate.value
+    : startAt
 
   if (editingId.value) {
     await todoStore.update(editingId.value, {

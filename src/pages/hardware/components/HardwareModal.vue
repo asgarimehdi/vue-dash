@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, watch, onMounted } from 'vue'
 import { useHardwareStore } from '@/stores/hardware'
-import { maskIP, maskMAC } from '@/utils/helpers'
+import { maskIP, maskMAC, jalaliToIso, isJalaliDate } from '@/utils/helpers'
 import JalaliDatePicker from '@/components/JalaliDatePicker.vue'
 import type { HardwareFormData } from '@/types/api'
 
@@ -85,11 +85,18 @@ watch(() => form.mac, (val) => {
 async function handleSubmit() {
   saving.value = true
   error.value = ''
+
+  // Convert Jalali date to ISO for API
+  const payload = { ...form }
+  if (payload.clean_at && isJalaliDate(payload.clean_at)) {
+    payload.clean_at = jalaliToIso(payload.clean_at)
+  }
+
   try {
     if (props.editId) {
-      await store.update(props.editId, form)
+      await store.update(props.editId, payload)
     } else {
-      await store.create(form)
+      await store.create(payload)
     }
     emit('saved')
   } catch (e: any) {
