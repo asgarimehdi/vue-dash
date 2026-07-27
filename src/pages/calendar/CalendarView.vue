@@ -233,21 +233,31 @@ function editEvent(id: number) {
 }
 
 async function saveTodo() {
-  if (!formTitle.value.trim() || !formStartDate.value) return
+  if (!formTitle.value.trim() || !formStartDate.value) {
+    formError.value = 'عنوان و تاریخ شروع الزامی است'
+    return
+  }
 
   saving.value = true
   formError.value = ''
 
   try {
-    const startAt = isJalaliDate(formStartDate.value)
-      ? `${jalaliToIso(formStartDate.value)}T${formStartTime.value || '00:00'}:00`
+    // تاریخ شمسی رو به میلادی با فرمت YYYY-MM-DD HH:mm:ss تبدیل کن
+    const startDate = isJalaliDate(formStartDate.value)
+      ? jalaliToIso(formStartDate.value)
       : formStartDate.value
     
-    const endAt = formEndDate.value
-      ? isJalaliDate(formEndDate.value)
-        ? `${jalaliToIso(formEndDate.value)}T${formEndTime.value || '00:00'}:00`
+    const startTime = formStartTime.value || '00:00'
+    const startAt = `${startDate} ${startTime}:00`
+
+    let endAt = startAt
+    if (formEndDate.value) {
+      const endDate = isJalaliDate(formEndDate.value)
+        ? jalaliToIso(formEndDate.value)
         : formEndDate.value
-      : startAt
+      const endTime = formEndTime.value || '00:00'
+      endAt = `${endDate} ${endTime}:00`
+    }
 
     if (editingId.value) {
       await todoStore.update(editingId.value, {

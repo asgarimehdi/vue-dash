@@ -64,23 +64,28 @@ async function save() {
   formError.value = ''
 
   try {
-    // Convert Jalali dates to Gregorian before sending to API
-    const payload: Record<string, any> = {
+    // تاریخ شمسی رو به میلادی با فرمت YYYY-MM-DD HH:mm:ss تبدیل کن
+    let startAt = form.value.start_at
+    if (startAt && isJalaliDate(startAt)) {
+      startAt = jalaliToIso(startAt)
+    }
+    if (startAt && !startAt.includes(' ')) {
+      startAt = `${startAt} 00:00:00`
+    }
+
+    let endAt = form.value.end_at
+    if (endAt && isJalaliDate(endAt)) {
+      endAt = jalaliToIso(endAt)
+    }
+    if (endAt && !endAt.includes(' ')) {
+      endAt = `${endAt} 00:00:00`
+    }
+
+    const payload = {
       title: form.value.title,
-      start_at: form.value.start_at,
+      start_at: startAt,
+      end_at: endAt || null,
       unit_id: form.value.unit_id || undefined,
-    }
-
-    if (form.value.end_at) {
-      payload.end_at = form.value.end_at
-    }
-
-    // تبدیل تاریخ شمسی به میلادی
-    if (payload.start_at && isJalaliDate(payload.start_at)) {
-      payload.start_at = jalaliToIso(payload.start_at)
-    }
-    if (payload.end_at && isJalaliDate(payload.end_at)) {
-      payload.end_at = jalaliToIso(payload.end_at)
     }
 
     if (editingId.value) {
