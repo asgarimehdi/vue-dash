@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useTodoStore } from '@/stores/todo'
-import { useHardwareStore } from '@/stores/hardware'
+import { useUnitStore } from '@/stores/units'
 import { formatJalali, jalaliToIso, isJalaliDate } from '@/utils/helpers'
 import JalaliDatePicker from '@/components/JalaliDatePicker.vue'
 import type { TodoFormData } from '@/types/api'
 
 const store = useTodoStore()
-const unitStore = useHardwareStore()
+const unitStore = useUnitStore()
 
 const showModal = ref(false)
 const editingId = ref<number | null>(null)
+const modalKey = ref(0)
 const filter = ref<'all' | 'pending' | 'completed'>('all')
 const monthFilter = ref<string>('')
 const saving = ref(false)
@@ -25,7 +26,7 @@ const form = ref<TodoFormData>({
 
 onMounted(() => {
   load()
-  unitStore.fetchList()
+  unitStore.fetchAllUnits()
 })
 
 async function load() {
@@ -42,6 +43,7 @@ async function load() {
 
 function openCreate() {
   editingId.value = null
+  modalKey.value++
   form.value = { title: '', start_at: '', end_at: '', unit_id: null }
   formError.value = ''
   showModal.value = true
@@ -49,6 +51,7 @@ function openCreate() {
 
 function openEdit(todo: any) {
   editingId.value = todo.id
+  modalKey.value++
   form.value = {
     title: todo.title,
     start_at: todo.start_at || '',
@@ -59,12 +62,17 @@ function openEdit(todo: any) {
   showModal.value = true
 }
 
+function closeModal() {
+  showModal.value = false
+  editingId.value = null
+  formError.value = ''
+}
+
 async function save() {
   saving.value = true
   formError.value = ''
 
   try {
-    // تاریخ شمسی رو به میلادی با فرمت YYYY-MM-DD HH:mm:ss تبدیل کن
     let startAt = form.value.start_at
     if (startAt && isJalaliDate(startAt)) {
       startAt = jalaliToIso(startAt)
@@ -95,6 +103,7 @@ async function save() {
     }
 
     showModal.value = false
+    closeModal()
     await load()
   } catch (e: any) {
     formError.value = e?.response?.data?.message || e?.response?.data?.error || 'خطا در ذخیره‌سازی'
@@ -112,6 +121,7 @@ async function toggleTodo(id: number) {
 async function deleteTodo(id: number) {
   if (!confirm('آیا از حذف این وظیفه اطمینان دارید؟')) return
   await store.remove(id)
+  closeModal()
   await load()
 }
 
@@ -152,29 +162,22 @@ const completedCount = computed(() => store.items.filter(i => i.is_completed).le
       >
         <div class="card-body p-4">
           <div class="flex items-start gap-3">
-            <!-- Checkbox -->
             <input
               type="checkbox"
               :checked="todo.is_completed"
               @change="toggleTodo(todo.id)"
               class="checkbox checkbox-success mt-1"
             />
-
             <div class="flex-1 min-w-0">
-              <!-- Title -->
               <p :class="['font-medium', todo.is_completed ? 'line-through opacity-50' : '']">
                 {{ todo.title }}
               </p>
-
-              <!-- Meta with Jalali dates -->
               <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs opacity-60 mt-1">
                 <span v-if="todo.start_at">📅 شروع: {{ formatJalali(todo.start_at) }}</span>
                 <span v-if="todo.end_at">🔚 پایان: {{ formatJalali(todo.end_at) }}</span>
                 <span v-if="todo.unit">🏢 {{ todo.unit.name }}</span>
               </div>
             </div>
-
-            <!-- Actions -->
             <div class="flex gap-1">
               <button @click="openEdit(todo)" class="btn btn-ghost btn-xs">✏️</button>
               <button @click="deleteTodo(todo.id)" class="btn btn-ghost btn-xs text-error">🗑️</button>
@@ -189,7 +192,7 @@ const completedCount = computed(() => store.items.filter(i => i.is_completed).le
     </div>
 
     <!-- Create/Edit Modal -->
-    <div v-if="showModal" class="modal modal-open" @click.self="showModal = false">
+    <div v-if="showModal" :key="modalKey" class="modal modal-open" @click.self="closeModal">
       <div class="modal-box max-w-md">
         <h3 class="font-bold text-lg mb-4">{{ editingId ? 'ویرایش وظیفه' : 'وظیفه جدید' }}</h3>
         <form @submit.prevent="save" class="space-y-4">
@@ -215,7 +218,7 @@ const completedCount = computed(() => store.items.filter(i => i.is_completed).le
               <span v-if="saving" class="loading loading-spinner loading-sm"></span>
               {{ saving ? 'در حال ذخیره...' : editingId ? 'بروزرسانی' : 'ایجاد' }}
             </button>
-            <button type="button" @click="showModal = false" class="btn btn-ghost">انصراف</button>
+            <button type="button" @click="closeModal" class="btn btn-ghost">انصراف</button>
           </div>
         </form>
       </div>

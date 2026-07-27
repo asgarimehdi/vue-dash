@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useTicketStore } from '@/stores/TicketStore'
 import { useUnitStore } from '@/stores/units'
+import { isJalaliDate, jalaliToIso } from '@/utils/helpers'
 import JalaliDatePicker from '@/components/JalaliDatePicker.vue'
 import type { TicketPriority } from '@/types/api'
 
@@ -40,7 +41,9 @@ async function handleSubmit() {
       unit_id: form.value.unit_id,
     }
     if (form.value.deadline) {
-      payload.deadline = form.value.deadline
+      payload.deadline = isJalaliDate(form.value.deadline)
+        ? jalaliToIso(form.value.deadline)
+        : form.value.deadline
     }
 
     const result = await store.create(payload)

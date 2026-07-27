@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useTodoStore } from '@/stores/todo'
-import { useHardwareStore } from '@/stores/hardware'
 import { useTicketStore } from '@/stores/TicketStore'
 import { formatJalali, isoToJalali, jalaliToIso, isJalaliDate } from '@/utils/helpers'
 import JalaliDatePicker from '@/components/JalaliDatePicker.vue'
