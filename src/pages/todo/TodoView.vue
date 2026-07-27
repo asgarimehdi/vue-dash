@@ -13,6 +13,8 @@ const showModal = ref(false)
 const editingId = ref<number | null>(null)
 const filter = ref<'all' | 'pending' | 'completed'>('all')
 const monthFilter = ref<string>('')
+const saving = ref(false)
+const formError = ref('')
 
 const form = ref<TodoFormData>({
   title: '',
@@ -41,6 +43,7 @@ async function load() {
 function openCreate() {
   editingId.value = null
   form.value = { title: '', start_at: '', end_at: '', unit_id: null }
+  formError.value = ''
   showModal.value = true
 }
 
@@ -52,26 +55,48 @@ function openEdit(todo: any) {
     end_at: todo.end_at || '',
     unit_id: todo.unit_id,
   }
+  formError.value = ''
   showModal.value = true
 }
 
 async function save() {
-  // Convert Jalali dates to Gregorian before sending to API
-  const payload = { ...form.value }
-  if (payload.start_at && isJalaliDate(payload.start_at)) {
-    payload.start_at = jalaliToIso(payload.start_at)
-  }
-  if (payload.end_at && isJalaliDate(payload.end_at)) {
-    payload.end_at = jalaliToIso(payload.end_at)
-  }
+  saving.value = true
+  formError.value = ''
 
-  if (editingId.value) {
-    await store.update(editingId.value, payload)
-  } else {
-    await store.create(payload)
+  try {
+    // Convert Jalali dates to Gregorian before sending to API
+    const payload: Record<string, any> = {
+      title: form.value.title,
+      start_at: form.value.start_at,
+      unit_id: form.value.unit_id || undefined,
+    }
+
+    if (form.value.end_at) {
+      payload.end_at = form.value.end_at
+    }
+
+    // تبدیل تاریخ شمسی به میلادی
+    if (payload.start_at && isJalaliDate(payload.start_at)) {
+      payload.start_at = jalaliToIso(payload.start_at)
+    }
+    if (payload.end_at && isJalaliDate(payload.end_at)) {
+      payload.end_at = jalaliToIso(payload.end_at)
+    }
+
+    if (editingId.value) {
+      await store.update(editingId.value, payload as any)
+    } else {
+      await store.create(payload as any)
+    }
+
+    showModal.value = false
+    await load()
+  } catch (e: any) {
+    formError.value = e?.response?.data?.message || e?.response?.data?.error || 'خطا در ذخیره‌سازی'
+    console.error('Save error:', e?.response?.data || e)
+  } finally {
+    saving.value = false
   }
-  showModal.value = false
-  await load()
 }
 
 async function toggleTodo(id: number) {
@@ -177,8 +202,14 @@ const completedCount = computed(() => store.items.filter(i => i.is_completed).le
               <JalaliDatePicker v-model="form.end_at" />
             </div>
           </div>
+
+          <div v-if="formError" class="alert alert-error text-sm">{{ formError }}</div>
+
           <div class="modal-action">
-            <button type="submit" class="btn btn-primary">{{ editingId ? 'بروزرسانی' : 'ایجاد' }}</button>
+            <button type="submit" :disabled="saving" class="btn btn-primary">
+              <span v-if="saving" class="loading loading-spinner loading-sm"></span>
+              {{ saving ? 'در حال ذخیره...' : editingId ? 'بروزرسانی' : 'ایجاد' }}
+            </button>
             <button type="button" @click="showModal = false" class="btn btn-ghost">انصراف</button>
           </div>
         </form>

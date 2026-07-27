@@ -23,6 +23,8 @@ let calendar: Calendar | null = null
 const showModal = ref(false)
 const editingId = ref<number | null>(null)
 const modalMode = ref<'create' | 'edit'>('create')
+const saving = ref(false)
+const formError = ref('')
 const formTitle = ref('')
 const formStartDate = ref('')
 const formStartTime = ref('')
@@ -234,34 +236,43 @@ function editEvent(id: number) {
 async function saveTodo() {
   if (!formTitle.value.trim() || !formStartDate.value) return
 
-  // Convert Jalali dates to Gregorian ISO before sending to API
-  const startAt = isJalaliDate(formStartDate.value)
-    ? `${jalaliToIso(formStartDate.value)}T${formStartTime.value || '00:00'}:00`
-    : formStartDate.value
-  
-  const endAt = formEndDate.value
-    ? isJalaliDate(formEndDate.value)
-      ? `${jalaliToIso(formEndDate.value)}T${formEndTime.value || '00:00'}:00`
-      : formEndDate.value
-    : startAt
+  saving.value = true
+  formError.value = ''
 
-  if (editingId.value) {
-    await todoStore.update(editingId.value, {
-      title: formTitle.value,
-      start_at: startAt,
-      end_at: endAt,
-    })
-  } else {
-    await todoStore.create({
-      title: formTitle.value,
-      start_at: startAt,
-      end_at: endAt,
-      unit_id: null,
-    })
+  try {
+    const startAt = isJalaliDate(formStartDate.value)
+      ? `${jalaliToIso(formStartDate.value)}T${formStartTime.value || '00:00'}:00`
+      : formStartDate.value
+    
+    const endAt = formEndDate.value
+      ? isJalaliDate(formEndDate.value)
+        ? `${jalaliToIso(formEndDate.value)}T${formEndTime.value || '00:00'}:00`
+        : formEndDate.value
+      : startAt
+
+    if (editingId.value) {
+      await todoStore.update(editingId.value, {
+        title: formTitle.value,
+        start_at: startAt,
+        end_at: endAt,
+      })
+    } else {
+      await todoStore.create({
+        title: formTitle.value,
+        start_at: startAt,
+        end_at: endAt,
+        unit_id: null,
+      })
+    }
+
+    showModal.value = false
+    await refreshEvents()
+  } catch (e: any) {
+    formError.value = e?.response?.data?.message || e?.response?.data?.error || 'خطا در ذخیره‌سازی'
+    console.error('Save error:', e?.response?.data || e)
+  } finally {
+    saving.value = false
   }
-
-  showModal.value = false
-  await refreshEvents()
 }
 
 async function deleteTodo() {
@@ -352,12 +363,15 @@ onBeforeUnmount(() => {
             </div>
           </div>
 
+          <div v-if="formError" class="alert alert-error text-sm">{{ formError }}</div>
+
           <div class="modal-action">
             <button v-if="editingId" type="button" @click="deleteTodo" class="btn btn-error">
               حذف
             </button>
-            <button type="submit" class="btn btn-primary">
-              {{ modalMode === 'create' ? 'ذخیره' : 'بروزرسانی' }}
+            <button type="submit" :disabled="saving" class="btn btn-primary">
+              <span v-if="saving" class="loading loading-spinner loading-sm"></span>
+              {{ saving ? 'در حال ذخیره...' : modalMode === 'create' ? 'ذخیره' : 'بروزرسانی' }}
             </button>
             <button type="button" @click="showModal = false" class="btn btn-ghost">انصراف</button>
           </div>

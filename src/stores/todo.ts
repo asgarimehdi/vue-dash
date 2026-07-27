@@ -11,8 +11,10 @@ export const useTodoStore = defineStore('todo', () => {
     loading.value = true
     try {
       const { data } = await api.get('/todos', { params })
-      // API may return { data: [...], meta: {...} } or direct array
       items.value = Array.isArray(data) ? data : data.data ?? []
+    } catch (e: any) {
+      items.value = []
+      console.error('Error fetching todos:', e?.response?.data || e.message)
     } finally {
       loading.value = false
     }
