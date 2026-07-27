@@ -165,9 +165,12 @@ export function formatJalali(dateStr: string | null): string {
  */
 export function isJalaliDate(str: string): boolean {
   if (!str) return false
-  const parts = str.replace(/\//g, '-').split('-')
+  // اول اعداد فارسی/عربی رو به انگلیسی تبدیل کن
+  const normalized = persianToEnglish(str)
+  const parts = normalized.replace(/\//g, '-').split('-')
   if (parts.length !== 3) return false
   const year = parseInt(parts[0], 10)
+  if (isNaN(year)) return false
   // سال شمسی بین 1200 تا 1500 هست
   return year >= 1200 && year <= 1500
 }
