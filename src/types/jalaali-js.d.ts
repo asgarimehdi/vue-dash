@@ -6,9 +6,9 @@ declare module 'jalaali-js' {
   }
 
   interface GregorianDate {
-    year: number
-    month: number
-    day: number
+    gy: number
+    gm: number
+    gd: number
   }
 
   export function toJalaali(year: number, month: number, day: number): JalaaliDate

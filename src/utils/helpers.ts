@@ -100,9 +100,9 @@ export function jalaliToIso(jalaliStr: string): string {
   if (!parsed) return jalaliStr
   try {
     const greg = jalaali.toGregorian(parsed.jy, parsed.jm, parsed.jd)
-    const mm = String(greg.month).padStart(2, '0')
-    const dd = String(greg.day).padStart(2, '0')
-    return `${greg.year}-${mm}-${dd}`
+    const mm = String(greg.gm).padStart(2, '0')
+    const dd = String(greg.gd).padStart(2, '0')
+    return `${greg.gy}-${mm}-${dd}`
   } catch {
     return jalaliStr
   }
