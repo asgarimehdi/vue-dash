@@ -47,10 +47,13 @@ export function cleanAiResponse(text: string): string {
 
 /**
  * جز به جز کردن تاریخ شمسی با فرمت YYYY/MM/DD یا YYYY-MM-DD
+ * پشتیبانی از اعداد فارسی و عربی (مثل ۱۴۰۳ یا ٢٠٢٤)
  */
 function parseJalaliDate(jalaliStr: string): { jy: number; jm: number; jd: number } | null {
   if (!jalaliStr) return null
-  const cleaned = jalaliStr.replace(/\//g, '-')
+  // تبدیل اعداد فارسی و عربی به انگلیسی
+  const normalized = persianToEnglish(jalaliStr)
+  const cleaned = normalized.replace(/\//g, '-')
   const parts = cleaned.split('-')
   if (parts.length !== 3) return null
   const jy = parseInt(parts[0], 10)
@@ -58,6 +61,19 @@ function parseJalaliDate(jalaliStr: string): { jy: number; jm: number; jd: numbe
   const jd = parseInt(parts[2], 10)
   if (isNaN(jy) || isNaN(jm) || isNaN(jd)) return null
   return { jy, jm, jd }
+}
+
+/**
+ * تبدیل اعداد فارسی و عربی به انگلیسی
+ */
+export function persianToEnglish(str: string): string {
+  const persianMap: Record<string, string> = {
+    '۰': '0', '۱': '1', '۲': '2', '۳': '3', '۴': '4',
+    '۵': '5', '۶': '6', '۷': '7', '۸': '8', '۹': '9',
+    '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+    '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9',
+  }
+  return str.replace(/[۰-۹٠-٩]/g, (ch) => persianMap[ch] || ch)
 }
 
 /**
