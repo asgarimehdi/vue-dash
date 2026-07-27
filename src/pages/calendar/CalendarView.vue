@@ -25,6 +25,7 @@ const editingId = ref<number | null>(null)
 const modalMode = ref<'create' | 'edit'>('create')
 const saving = ref(false)
 const formError = ref('')
+const modalKey = ref(0)
 const formTitle = ref('')
 const formStartDate = ref('')
 const formStartTime = ref('')
@@ -207,6 +208,7 @@ function openCreateModal(start: string, end: string) {
   modalMode.value = 'create'
   editingId.value = null
   formTitle.value = ''
+  modalKey.value++
 
   // Convert ISO to Jalali for the date pickers
   formStartDate.value = isoToJalali(start)
@@ -305,7 +307,12 @@ async function saveTodo() {
 async function deleteTodo() {
   if (!editingId.value) return
   if (!confirm('آیا از حذف این وظیفه اطمینان دارید؟')) return
-  await todoStore.remove(editingId.value)
+  try {
+    await todoStore.remove(editingId.value)
+  } catch (e: any) {
+    formError.value = e?.response?.data?.message || 'خطا در حذف'
+    return
+  }
   showModal.value = false
   resetForm()
   await refreshEvents()
@@ -363,7 +370,7 @@ onBeforeUnmount(() => {
     </div>
 
     <!-- Create/Edit Modal -->
-    <div v-if="showModal" class="modal modal-open" @click.self="closeModal">
+    <div v-if="showModal" :key="modalKey" class="modal modal-open" @click.self="closeModal">
       <div class="modal-box max-w-md">
         <h3 class="font-bold text-lg mb-4">
           {{ modalMode === 'create' ? 'تسک جدید' : 'ویرایش تسک' }}
