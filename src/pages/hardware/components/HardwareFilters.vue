@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useHardwareStore } from '@/stores/hardware'
 import { HARDWARE_TYPE_LABELS, NET_TYPE_LABELS } from '@/utils/helpers'
 
@@ -10,10 +11,6 @@ function apply() {
   store.filters.page = 1
   store.fetchList()
 }
-</script>
-
-<script lang="ts">
-import { ref } from 'vue'
 </script>
 
 <template>

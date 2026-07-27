@@ -103,7 +103,6 @@ async function save() {
     }
 
     showModal.value = false
-    closeModal()
     await load()
   } catch (e: any) {
     formError.value = e?.response?.data?.message || e?.response?.data?.error || 'خطا در ذخیره‌سازی'
