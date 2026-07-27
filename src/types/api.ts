@@ -156,6 +156,26 @@ export interface BulkAction {
   ids: number[]
 }
 
+/* ===== Todo ===== */
+export interface Todo {
+  id: number
+  title: string
+  start_at: string
+  end_at: string | null
+  is_completed: boolean
+  unit_id: number | null
+  created_at?: string
+  updated_at?: string
+  unit?: { id: number; name: string }
+}
+
+export interface TodoFormData {
+  title: string
+  start_at: string
+  end_at: string
+  unit_id: number | null
+}
+
 /* ===== AI Chat ===== */
 export interface ChatMessage {
   role: 'user' | 'assistant'

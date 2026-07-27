@@ -22,6 +22,12 @@ const router = createRouter({
       component: () => import('@/pages/ai/AiChatView.vue'),
       meta: { requiresAuth: true, title: 'چت هوش مصنوعی' },
     },
+    {
+      path: '/todos',
+      name: 'todos',
+      component: () => import('@/pages/todo/TodoView.vue'),
+      meta: { requiresAuth: true, title: 'وظایف' },
+    },
   ],
 })
 
