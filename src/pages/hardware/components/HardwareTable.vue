@@ -12,7 +12,7 @@ const emit = defineEmits<{
 const sortField = (field: string) => store.setSort(field)
 
 function sortIcon(field: string): string {
-  if (store.filters.sort_field !== field) return '↕'
+  if (store.filters.sort_by !== field) return '↕'
   return store.filters.sort_dir === 'asc' ? '↑' : '↓'
 }
 
@@ -36,7 +36,7 @@ const columns = [
   { key: 'cpu', label: 'CPU' },
   { key: 'ram', label: 'RAM' },
   { key: 'hdd', label: 'HDD' },
-  { key: 'person?.f_name', label: 'پرسنل' },
+  { key: 'person?.name', label: 'پرسنل' },
 ]
 </script>
 
@@ -78,8 +78,8 @@ const columns = [
           </td>
           <td class="font-medium">{{ item.pc_name }}</td>
           <td>
-            <span :class="['badge', 'badge-sm', typeBadge[item.type] || '']">
-              {{ HARDWARE_TYPE_LABELS[item.type] || item.type }}
+            <span :class="['badge', 'badge-sm', typeBadge[item.type || ''] || '']">
+              {{ HARDWARE_TYPE_LABELS[item.type || ''] || '-' }}
             </span>
           </td>
           <td>{{ item.os }}</td>
@@ -87,7 +87,7 @@ const columns = [
           <td>{{ item.cpu }}</td>
           <td>{{ item.ram }}</td>
           <td>{{ item.hdd }}</td>
-          <td>{{ item.person?.f_name }} {{ item.person?.l_name }}</td>
+          <td>{{ item.person?.name || '-' }}</td>
           <td>
             <div class="flex gap-1">
               <button @click="emit('open-edit', item.id)" class="btn btn-ghost btn-xs">✏️</button>
@@ -121,8 +121,8 @@ const columns = [
             />
             <div>
               <h3 class="font-bold">{{ item.pc_name }}</h3>
-              <span :class="['badge', 'badge-sm', typeBadge[item.type] || '']">
-                {{ HARDWARE_TYPE_LABELS[item.type] || item.type }}
+              <span :class="['badge', 'badge-sm', typeBadge[item.type || ''] || '']">
+                {{ HARDWARE_TYPE_LABELS[item.type || ''] || '-' }}
               </span>
             </div>
           </div>
@@ -137,7 +137,7 @@ const columns = [
           <div><span class="opacity-60">CPU:</span> {{ item.cpu }}</div>
           <div><span class="opacity-60">RAM:</span> {{ item.ram }}</div>
           <div><span class="opacity-60">HDD:</span> {{ item.hdd }}</div>
-          <div v-if="item.person"><span class="opacity-60">پرسنل:</span> {{ item.person.f_name }} {{ item.person.l_name }}</div>
+          <div v-if="item.person"><span class="opacity-60">پرسنل:</span> {{ item.person.name }}</div>
         </div>
         <div v-if="item.comments" class="text-xs opacity-50 mt-2">{{ item.comments }}</div>
       </div>

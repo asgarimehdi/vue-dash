@@ -47,15 +47,17 @@ export type NetType = 'wired' | 'wireless' | 'both'
 
 export interface Hardware {
   id: number
+  n_code: string
   pc_name: string
-  type: HardwareType
+  type: HardwareType | null
   os: string
   ip_valid: string
   ip_local: string
   mac: string
-  net_type: NetType
+  net_type: NetType | null
   switch: string
   port: string
+  shutdown: boolean
   vlan: string
   motherboard: string
   cpu: string
@@ -64,22 +66,27 @@ export interface Hardware {
   comments: string
   mark: boolean
   clean_at: string | null
-  person_id: number | null
-  person?: PersonBrief
   created_at?: string
   updated_at?: string
+  person?: {
+    n_code: string
+    name: string
+    unit?: string
+  }
 }
 
 export interface HardwareFormData {
+  n_code: string
   pc_name: string
-  type: HardwareType
+  type: HardwareType | ''
   os: string
   ip_valid: string
   ip_local: string
   mac: string
-  net_type: NetType
+  net_type: NetType | ''
   switch: string
   port: string
+  shutdown: boolean
   vlan: string
   motherboard: string
   cpu: string
@@ -88,7 +95,6 @@ export interface HardwareFormData {
   comments: string
   mark: boolean
   clean_at: string
-  person_id: number | null
 }
 
 /* ===== Hardware Filters ===== */
@@ -101,13 +107,13 @@ export interface HardwareFilters {
   hdd: string
   net_type: string
   mark: string
-  person_name: string
-  person_ncode: string
-  unit_name: string
-  semat_name: string
+  shutdown: string
+  person: string
+  unit: string
+  semat: string
   page: number
   per_page: number
-  sort_field: string
+  sort_by: string
   sort_dir: 'asc' | 'desc'
 }
 
@@ -120,13 +126,13 @@ export const DEFAULT_HARDWARE_FILTERS: HardwareFilters = {
   hdd: '',
   net_type: '',
   mark: '',
-  person_name: '',
-  person_ncode: '',
-  unit_name: '',
-  semat_name: '',
+  shutdown: '',
+  person: '',
+  unit: '',
+  semat: '',
   page: 1,
   per_page: 15,
-  sort_field: 'created_at',
+  sort_by: 'id',
   sort_dir: 'desc',
 }
 

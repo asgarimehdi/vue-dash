@@ -19,6 +19,7 @@ const saving = ref(false)
 const error = ref('')
 
 const form = reactive<HardwareFormData>({
+  n_code: '',
   pc_name: '',
   type: 'pc',
   os: '',
@@ -28,6 +29,7 @@ const form = reactive<HardwareFormData>({
   net_type: 'wired',
   switch: '',
   port: '',
+  shutdown: false,
   vlan: '',
   motherboard: '',
   cpu: '',
@@ -36,7 +38,6 @@ const form = reactive<HardwareFormData>({
   comments: '',
   mark: false,
   clean_at: '',
-  person_id: null,
 })
 
 // Load data if editing
@@ -44,15 +45,17 @@ onMounted(async () => {
   if (props.editId) {
     try {
       const item = await store.fetchOne(props.editId)
+      form.n_code = item.n_code
       form.pc_name = item.pc_name
-      form.type = item.type
+      form.type = item.type || 'pc'
       form.os = item.os
       form.ip_valid = item.ip_valid
       form.ip_local = item.ip_local
       form.mac = item.mac
-      form.net_type = item.net_type
+      form.net_type = item.net_type || 'wired'
       form.switch = item.switch
       form.port = item.port
+      form.shutdown = item.shutdown
       form.vlan = item.vlan
       form.motherboard = item.motherboard
       form.cpu = item.cpu
@@ -61,7 +64,6 @@ onMounted(async () => {
       form.comments = item.comments
       form.mark = item.mark
       form.clean_at = item.clean_at || ''
-      form.person_id = item.person_id
     } catch {
       error.value = 'خطا در بارگذاری اطلاعات'
     }
@@ -100,7 +102,7 @@ async function handleSubmit() {
     }
     emit('saved')
   } catch (e: any) {
-    error.value = e.response?.data?.message || 'خطا در ذخیره‌سازی'
+    error.value = e.response?.data?.message || e.response?.data?.error || 'خطا در ذخیره‌سازی'
   } finally {
     saving.value = false
   }
@@ -116,6 +118,12 @@ async function handleSubmit() {
 
       <form @submit.prevent="handleSubmit" class="space-y-3">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <!-- N_Code -->
+          <div class="form-control">
+            <label class="label py-1"><span class="label-text">کد ملی پرسنل *</span></label>
+            <input v-model="form.n_code" required class="input input-bordered input-sm" placeholder="کد ملی" />
+          </div>
+
           <!-- PC Name -->
           <div class="form-control">
             <label class="label py-1"><span class="label-text">نام سیستم *</span></label>
@@ -124,8 +132,8 @@ async function handleSubmit() {
 
           <!-- Type -->
           <div class="form-control">
-            <label class="label py-1"><span class="label-text">نوع *</span></label>
-            <select v-model="form.type" required class="select select-bordered select-sm">
+            <label class="label py-1"><span class="label-text">نوع</span></label>
+            <select v-model="form.type" class="select select-bordered select-sm">
               <option value="pc">کامپیوتر</option>
               <option value="laptop">لپ‌تاپ</option>
               <option value="server">سرور</option>
@@ -206,6 +214,12 @@ async function handleSubmit() {
           <div class="form-control">
             <label class="label py-1"><span class="label-text">هارد</span></label>
             <input v-model="form.hdd" class="input input-bordered input-sm" placeholder="SSD 256" />
+          </div>
+
+          <!-- Shutdown -->
+          <div class="form-control">
+            <label class="label py-1"><span class="label-text">خاموش</span></label>
+            <input v-model="form.shutdown" type="checkbox" class="toggle toggle-sm mt-2" />
           </div>
 
           <!-- Clean At -->

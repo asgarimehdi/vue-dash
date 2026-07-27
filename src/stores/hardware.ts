@@ -6,7 +6,6 @@ import type {
   HardwareFormData,
   HardwareFilters,
   PaginatedMeta,
-  PaginatedResponse,
 } from '@/types/api'
 import { DEFAULT_HARDWARE_FILTERS } from '@/types/api'
 
@@ -25,10 +24,9 @@ export const useHardwareStore = defineStore('hardware', () => {
       const params: Record<string, any> = {
         page: filters.page,
         per_page: filters.per_page,
-        sort_field: filters.sort_field,
+        sort_by: filters.sort_by,
         sort_dir: filters.sort_dir,
       }
-      // Attach non-empty filters
       const filterMap: Record<string, string> = {
         search: filters.search,
         type: filters.type,
@@ -38,37 +36,41 @@ export const useHardwareStore = defineStore('hardware', () => {
         hdd: filters.hdd,
         net_type: filters.net_type,
         mark: filters.mark,
-        person_name: filters.person_name,
-        person_ncode: filters.person_ncode,
-        unit_name: filters.unit_name,
-        semat_name: filters.semat_name,
+        shutdown: filters.shutdown,
+        person: filters.person,
+        unit: filters.unit,
+        semat: filters.semat,
       }
       for (const [key, val] of Object.entries(filterMap)) {
         if (val) params[key] = val
       }
 
-      const { data } = await api.get<PaginatedResponse<Hardware>>('/hardware', { params })
-      items.value = data.data
-      meta.value = data.meta
+      const { data } = await api.get('/hardware', { params })
+      // پاسخ API: { data: [...], meta: {...} }
+      items.value = data.data ?? []
+      meta.value = data.meta ?? null
+    } catch {
+      items.value = []
+      meta.value = null
     } finally {
       loading.value = false
     }
   }
 
   async function fetchOne(id: number): Promise<Hardware> {
-    const { data } = await api.get<{ data: Hardware }>(`/hardware/${id}`)
-    current.value = data.data
-    return data.data
+    const { data } = await api.get(`/hardware/${id}`)
+    current.value = data.data ?? data
+    return current.value!
   }
 
   async function create(payload: HardwareFormData): Promise<Hardware> {
-    const { data } = await api.post<{ data: Hardware }>('/hardware', payload)
-    return data.data
+    const { data } = await api.post('/hardware', payload)
+    return data.data ?? data
   }
 
   async function update(id: number, payload: Partial<HardwareFormData>): Promise<Hardware> {
-    const { data } = await api.put<{ data: Hardware }>(`/hardware/${id}`, payload)
-    return data.data
+    const { data } = await api.put(`/hardware/${id}`, payload)
+    return data.data ?? data
   }
 
   async function remove(id: number) {
@@ -76,11 +78,11 @@ export const useHardwareStore = defineStore('hardware', () => {
   }
 
   async function bulkDelete(ids: number[]) {
-    await Promise.all(ids.map((id) => api.delete(`/hardware/${id}`)))
+    await api.post('/hardware/bulk-delete', { ids })
   }
 
   async function bulkMark(ids: number[], mark: boolean) {
-    await Promise.all(ids.map((id) => api.put(`/hardware/${id}`, { mark })))
+    await api.post('/hardware/bulk-mark', { ids, mark })
   }
 
   function toggleSelect(id: number) {
@@ -108,10 +110,10 @@ export const useHardwareStore = defineStore('hardware', () => {
   }
 
   function setSort(field: string) {
-    if (filters.sort_field === field) {
+    if (filters.sort_by === field) {
       filters.sort_dir = filters.sort_dir === 'asc' ? 'desc' : 'asc'
     } else {
-      filters.sort_field = field
+      filters.sort_by = field
       filters.sort_dir = 'asc'
     }
     fetchList()

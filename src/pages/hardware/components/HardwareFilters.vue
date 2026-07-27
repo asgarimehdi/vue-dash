@@ -70,6 +70,16 @@ import { ref } from 'vue'
           </select>
         </div>
 
+        <!-- Shutdown -->
+        <div class="form-control">
+          <label class="label py-1"><span class="label-text text-xs">وضعیت</span></label>
+          <select v-model="store.filters.shutdown" @change="apply" class="select select-bordered select-sm">
+            <option value="">همه</option>
+            <option value="true">خاموش</option>
+            <option value="false">روشن</option>
+          </select>
+        </div>
+
         <!-- Mark -->
         <div class="form-control">
           <label class="label py-1"><span class="label-text text-xs">علامت‌دار</span></label>
@@ -80,28 +90,22 @@ import { ref } from 'vue'
           </select>
         </div>
 
-        <!-- Person Name -->
+        <!-- Person -->
         <div class="form-control">
-          <label class="label py-1"><span class="label-text text-xs">نام پرسنل</span></label>
-          <input v-model="store.filters.person_name" @input="apply" class="input input-bordered input-sm" placeholder="جستجوی نام" />
+          <label class="label py-1"><span class="label-text text-xs">پرسنل</span></label>
+          <input v-model="store.filters.person" @input="apply" class="input input-bordered input-sm" placeholder="نام یا کد ملی" />
         </div>
 
-        <!-- Person NCode -->
-        <div class="form-control">
-          <label class="label py-1"><span class="label-text text-xs">کد ملی پرسنل</span></label>
-          <input v-model="store.filters.person_ncode" @input="apply" class="input input-bordered input-sm" placeholder="کد ملی" />
-        </div>
-
-        <!-- Unit Name -->
+        <!-- Unit -->
         <div class="form-control">
           <label class="label py-1"><span class="label-text text-xs">واحد سازمانی</span></label>
-          <input v-model="store.filters.unit_name" @input="apply" class="input input-bordered input-sm" placeholder="نام واحد" />
+          <input v-model="store.filters.unit" @input="apply" class="input input-bordered input-sm" placeholder="نام واحد" />
         </div>
 
-        <!-- Semat Name -->
+        <!-- Semat -->
         <div class="form-control">
           <label class="label py-1"><span class="label-text text-xs">سمت</span></label>
-          <input v-model="store.filters.semat_name" @input="apply" class="input input-bordered input-sm" placeholder="نام سمت" />
+          <input v-model="store.filters.semat" @input="apply" class="input input-bordered input-sm" placeholder="نام سمت" />
         </div>
       </div>
     </div>
