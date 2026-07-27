@@ -182,6 +182,46 @@ export interface Ticket {
   waiting_duration?: { text: string; class: string }
 }
 
+/* ===== Unit / Organization ===== */
+export interface UnitType {
+  id: number
+  name: string
+  description?: string
+  allowed_parent_types?: UnitType[]
+}
+
+export interface Unit {
+  id: number
+  name: string
+  description?: string
+  region_id?: number
+  parent_id?: number
+  unit_type_id?: number
+  lat?: number
+  lng?: number
+  is_active?: boolean
+  created_at?: string
+  updated_at?: string
+  unit_type?: UnitType
+  region?: Region
+  parent?: UnitBrief
+  children?: Unit[]
+}
+
+export interface Region {
+  id: number
+  name: string
+  type?: string // 'province' | 'county'
+  parent_id?: number
+}
+
+export interface UnitWithTree extends Unit {
+  depth?: number
+  has_children?: boolean
+  expanded?: boolean
+  loading?: boolean
+}
+
 /* ===== Todo ===== */
 export interface Todo {
   id: number

@@ -34,6 +34,12 @@ const router = createRouter({
       component: () => import('@/pages/calendar/CalendarView.vue'),
       meta: { requiresAuth: true, title: 'تقویم' },
     },
+    {
+      path: '/units',
+      name: 'units',
+      component: () => import('@/pages/units/UnitsView.vue'),
+      meta: { requiresAuth: true, title: 'مراکز' },
+    },
   ],
 })
 
