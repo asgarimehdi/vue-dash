@@ -15,7 +15,7 @@ function createWindow() {
     title: 'H-Dashboard',
     icon: path.join(__dirname, '../public/favicon.svg'),
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,

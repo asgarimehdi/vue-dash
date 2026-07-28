@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useTodoStore } from '@/stores/todo'
-import { useUnitStore } from '@/stores/units'
 import { formatJalali, jalaliToIso, isJalaliDate } from '@/utils/helpers'
 import JalaliDatePicker from '@/components/JalaliDatePicker.vue'
 import type { Todo, TodoFormData } from '@/types/api'
 
 const store = useTodoStore()
-const unitStore = useUnitStore()
 
 const showModal = ref(false)
 const editingId = ref<number | null>(null)
@@ -26,7 +24,6 @@ const form = ref<TodoFormData>({
 
 onMounted(() => {
   load()
-  unitStore.fetchAllUnits()
 })
 
 async function load() {

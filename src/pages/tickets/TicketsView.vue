@@ -27,11 +27,11 @@ const priorityConfig: Record<string, { label: string; color: string }> = {
 }
 
 onMounted(() => {
-  store.fetchAll()
+  store.fetchAll({ per_page: 50 })
 })
 
 async function applyFilter() {
-  const params: Parameters<typeof store.fetchAll>[0] = { page: 1 }
+  const params: Parameters<typeof store.fetchAll>[0] = { page: 1, per_page: 50 }
   if (filterStatus.value) params.status = filterStatus.value as TicketStatus
   if (filterPriority.value) params.priority = filterPriority.value as TicketPriority
   if (filterAssignedToMe.value) params.assigned_to_me = true
@@ -54,7 +54,7 @@ const totalPages = computed(() => store.meta?.last_page || 1)
 const currentPage = computed(() => store.meta?.current_page || 1)
 
 async function goToPage(page: number) {
-  await store.fetchAll({ page })
+  await store.fetchAll({ page, per_page: 50 })
 }
 
 // Smart pagination
