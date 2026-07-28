@@ -4,7 +4,6 @@ import { useTodoStore } from '@/stores/todo'
 import { useTicketStore } from '@/stores/TicketStore'
 import { isoToJalali, jalaliToIso, isJalaliDate } from '@/utils/helpers'
 import JalaliDatePicker from '@/components/JalaliDatePicker.vue'
-import type { Todo } from '@/types/api'
 import { Calendar } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -141,10 +140,8 @@ function initCalendar() {
       }
     },
     events: buildEvents(),
-    datesSet: async (info) => {
-      await todoStore.fetchList({
-        // The API might support date range; for now we just fetch all
-      })
+    datesSet: () => {
+      // Refresh events from current store data without re-fetching (already loaded in onMounted)
       if (calendar) {
         calendar.removeAllEvents()
         for (const ev of buildEvents()) {

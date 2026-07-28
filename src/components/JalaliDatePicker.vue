@@ -22,11 +22,13 @@ watch(internalValue, (val) => {
 })
 
 onMounted(async () => {
-  // Dynamically add CSS from CDN (avoids build issues)
-  cssLink.value = document.createElement('link')
-  cssLink.value.rel = 'stylesheet'
-  cssLink.value.href = 'https://unpkg.com/jalalidatepicker@0.6.0/dist/jalaliDatepicker.css'
-  document.head.appendChild(cssLink.value)
+  // Dynamically add CSS from CDN (avoids build issues) — skip if already present
+  if (!document.querySelector('link[href*="jalalidatepicker@0.6.0"]')) {
+    cssLink.value = document.createElement('link')
+    cssLink.value.rel = 'stylesheet'
+    cssLink.value.href = 'https://unpkg.com/jalalidatepicker@0.6.0/dist/jalaliDatepicker.css'
+    document.head.appendChild(cssLink.value)
+  }
 
   const mod = await import('jalalidatepicker')
 

@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useHardwareStore } from '@/stores/hardware'
 import { QUICK_FILTERS } from '@/utils/helpers'
+import type { HardwareFilters as HardwareFiltersType } from '@/types/api'
 import HardwareTable from './components/HardwareTable.vue'
 import HardwareModal from './components/HardwareModal.vue'
 import HardwareFilters from './components/HardwareFilters.vue'
@@ -45,7 +46,7 @@ async function onBulkMark(mark: boolean) {
   await store.fetchList()
 }
 
-function onQuickFilter(ff: any) {
+function onQuickFilter(ff: Partial<HardwareFiltersType>) {
   store.applyQuickFilter(ff)
 }
 

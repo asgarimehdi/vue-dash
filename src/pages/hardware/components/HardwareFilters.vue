@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onBeforeUnmount } from 'vue'
 import { useHardwareStore } from '@/stores/hardware'
 import { HARDWARE_TYPE_LABELS, NET_TYPE_LABELS } from '@/utils/helpers'
 
@@ -16,6 +16,10 @@ function debouncedApply() {
     store.fetchList()
   }, 300)
 }
+
+onBeforeUnmount(() => {
+  if (filterTimer) clearTimeout(filterTimer)
+})
 
 function apply() {
   store.filters.page = 1

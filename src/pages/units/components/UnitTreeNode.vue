@@ -69,7 +69,7 @@ function getTypeIcon(name?: string): string {
       <UnitTreeNode
         v-for="child in node.children"
         :key="child.id"
-        :node="child as any"
+        :node="child as UnitWithTree"
         :depth="depth + 1"
       />
     </div>
