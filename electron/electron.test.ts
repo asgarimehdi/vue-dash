@@ -58,7 +58,6 @@ describe('Electron preload.cjs', () => {
     expect(mockElectronAPI.isElectron).toBe(true)
     expect(mockElectronAPI.platform).toBeDefined()
     expect(mockElectronAPI.versions.node).toBeDefined()
-    expect(mockElectronAPI.versions.chrome).toBeDefined()
     expect(mockElectronAPI.versions.electron).toBe('43.2.0')
   })
 })

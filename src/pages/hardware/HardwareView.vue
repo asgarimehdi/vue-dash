@@ -69,7 +69,7 @@ function toggleSelectAll() {
           <span class="text-sm font-medium">{{ store.selectedIds.size }} انتخاب</span>
           <button @click="onBulkDelete" class="btn btn-error btn-sm">🗑️ حذف</button>
           <button @click="onBulkMark(true)" class="btn btn-warning btn-sm">⭐ علامت‌دار</button>
-          <button @click="onBulkMark(false)" class="btn btn-ghost btn-sm">取消 علامت</button>
+          <button @click="onBulkMark(false)" class="btn btn-ghost btn-sm">حذف علامت</button>
         </div>
         <button @click="openCreate" class="btn btn-primary">
           + سخت‌افزار جدید

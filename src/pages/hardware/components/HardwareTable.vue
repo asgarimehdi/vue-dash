@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useHardwareStore } from '@/stores/hardware'
 import { HARDWARE_TYPE_LABELS } from '@/utils/helpers'
+import { computed } from 'vue'
 
 const store = useHardwareStore()
 
@@ -27,6 +28,39 @@ const typeBadge: Record<string, string> = {
   laptop: 'badge-warning',
   server: 'badge-error',
 }
+
+// Smart pagination: show max 7 page buttons + ellipsis + last page
+const MAX_VISIBLE_PAGES = 7
+
+const paginationPages = computed(() => {
+  if (!store.meta) return []
+  const current = store.meta.current_page
+  const last = store.meta.last_page
+  if (last <= MAX_VISIBLE_PAGES + 2) {
+    // Show all pages
+    return Array.from({ length: last }, (_, i) => i + 1)
+  }
+  // Sliding window centered on current
+  let start = Math.max(1, current - Math.floor(MAX_VISIBLE_PAGES / 2))
+  let end = start + MAX_VISIBLE_PAGES - 1
+  if (end > last - 1) {
+    end = last - 1
+    start = Math.max(1, end - MAX_VISIBLE_PAGES + 1)
+  }
+  const pages: number[] = []
+  for (let p = start; p <= end; p++) pages.push(p)
+  return pages
+})
+
+const showEllipsisBefore = computed(() => {
+  if (!store.meta) return false
+  return paginationPages.value.length > 0 && paginationPages.value[paginationPages.value.length - 1] < store.meta.last_page - 1
+})
+
+const showLastPage = computed(() => {
+  if (!store.meta) return false
+  return paginationPages.value.length === 0 || paginationPages.value[paginationPages.value.length - 1] < store.meta.last_page
+})
 
 const columns = [
   { key: 'pc_name', label: 'نام سیستم' },
@@ -149,13 +183,31 @@ const columns = [
   <div v-if="store.meta && store.meta.last_page > 1" class="flex justify-center mt-6">
     <div class="join">
       <button
-        v-for="p in store.meta.last_page"
+        :disabled="store.meta.current_page <= 1"
+        @click="store.setPage(store.meta.current_page - 1)"
+        class="join-item btn btn-sm"
+      >‹</button>
+      <button
+        v-for="p in paginationPages"
         :key="p"
         @click="store.setPage(p)"
         :class="['join-item', 'btn', 'btn-sm', p === store.meta.current_page ? 'btn-primary' : 'btn-ghost']"
-      >
-        {{ p }}
-      </button>
+      >{{ p }}</button>
+      <button
+        v-if="showEllipsisBefore"
+        class="join-item btn btn-sm btn-ghost disabled:opacity-40"
+        disabled
+      >...</button>
+      <button
+        v-if="showLastPage"
+        @click="store.setPage(store.meta.last_page)"
+        :class="['join-item', 'btn', 'btn-sm', store.meta.last_page === store.meta.current_page ? 'btn-primary' : 'btn-ghost']"
+      >{{ store.meta.last_page }}</button>
+      <button
+        :disabled="store.meta.current_page >= store.meta.last_page"
+        @click="store.setPage(store.meta.current_page + 1)"
+        class="join-item btn btn-sm"
+      >›</button>
     </div>
   </div>
 </template>

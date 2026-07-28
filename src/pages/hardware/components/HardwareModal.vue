@@ -70,19 +70,22 @@ onMounted(async () => {
   }
 })
 
-// IP Masking
+// IP/MAC masking is applied on blur to avoid cursor-jump issues during typing.
 watch(() => form.ip_valid, (val) => {
-  if (val) form.ip_valid = maskIP(val)
+  if (val && !val.includes('.') && val.length > 3) form.ip_valid = maskIP(val)
 })
 
-watch(() => form.ip_local, (val) => {
-  if (val) form.ip_local = maskIP(val)
-})
+function onBlurIP() {
+  if (form.ip_valid) form.ip_valid = maskIP(form.ip_valid)
+}
 
-// MAC Masking
-watch(() => form.mac, (val) => {
-  if (val) form.mac = maskMAC(val)
-})
+function onBlurLocal() {
+  if (form.ip_local) form.ip_local = maskIP(form.ip_local)
+}
+
+function onBlurMAC() {
+  if (form.mac) form.mac = maskMAC(form.mac)
+}
 
 async function handleSubmit() {
   saving.value = true
@@ -149,19 +152,19 @@ async function handleSubmit() {
           <!-- IP Valid -->
           <div class="form-control">
             <label class="label py-1"><span class="label-text">IP معتبر</span></label>
-            <input v-model="form.ip_valid" class="input input-bordered input-sm" placeholder="192.168.1.1" maxlength="15" />
+            <input v-model="form.ip_valid" @blur="onBlurIP" class="input input-bordered input-sm" placeholder="192.168.1.1" maxlength="15" />
           </div>
 
           <!-- IP Local -->
           <div class="form-control">
             <label class="label py-1"><span class="label-text">IP محلی</span></label>
-            <input v-model="form.ip_local" class="input input-bordered input-sm" placeholder="10.0.0.1" maxlength="15" />
+            <input v-model="form.ip_local" @blur="onBlurLocal" class="input input-bordered input-sm" placeholder="10.0.0.1" maxlength="15" />
           </div>
 
           <!-- MAC -->
           <div class="form-control">
             <label class="label py-1"><span class="label-text">MAC</span></label>
-            <input v-model="form.mac" class="input input-bordered input-sm" placeholder="AA:BB:CC:DD:EE:FF" maxlength="17" />
+            <input v-model="form.mac" @blur="onBlurMAC" class="input input-bordered input-sm" placeholder="AA:BB:CC:DD:EE:FF" maxlength="17" />
           </div>
 
           <!-- Net Type -->

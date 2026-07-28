@@ -7,6 +7,16 @@ const store = useHardwareStore()
 
 const expanded = ref(false)
 
+// Debounced filter application (300ms)
+let filterTimer: ReturnType<typeof setTimeout> | null = null
+function debouncedApply() {
+  if (filterTimer) clearTimeout(filterTimer)
+  filterTimer = setTimeout(() => {
+    store.filters.page = 1
+    store.fetchList()
+  }, 300)
+}
+
 function apply() {
   store.filters.page = 1
   store.fetchList()
@@ -22,7 +32,7 @@ function apply() {
         <!-- Search -->
         <div class="form-control">
           <label class="label py-1"><span class="label-text text-xs">جستجوی کلی</span></label>
-          <input v-model="store.filters.search" @input="apply" class="input input-bordered input-sm" placeholder="نام، IP، MAC..." />
+          <input v-model="store.filters.search" @input="debouncedApply" class="input input-bordered input-sm" placeholder="نام، IP، MAC..." />
         </div>
 
         <!-- Type -->
@@ -37,25 +47,25 @@ function apply() {
         <!-- OS -->
         <div class="form-control">
           <label class="label py-1"><span class="label-text text-xs">سیستم عامل</span></label>
-          <input v-model="store.filters.os" @input="apply" class="input input-bordered input-sm" placeholder="مثلاً Windows 10" />
+          <input v-model="store.filters.os" @input="debouncedApply" class="input input-bordered input-sm" placeholder="مثلاً Windows 10" />
         </div>
 
         <!-- CPU -->
         <div class="form-control">
           <label class="label py-1"><span class="label-text text-xs">پردازنده</span></label>
-          <input v-model="store.filters.cpu" @input="apply" class="input input-bordered input-sm" placeholder="مثلاً Intel i5" />
+          <input v-model="store.filters.cpu" @input="debouncedApply" class="input input-bordered input-sm" placeholder="مثلاً Intel i5" />
         </div>
 
         <!-- RAM -->
         <div class="form-control">
           <label class="label py-1"><span class="label-text text-xs">RAM</span></label>
-          <input v-model="store.filters.ram" @input="apply" class="input input-bordered input-sm" placeholder="مثلاً 8 یا 16" />
+          <input v-model="store.filters.ram" @input="debouncedApply" class="input input-bordered input-sm" placeholder="مثلاً 8 یا 16" />
         </div>
 
         <!-- HDD -->
         <div class="form-control">
           <label class="label py-1"><span class="label-text text-xs">هارد</span></label>
-          <input v-model="store.filters.hdd" @input="apply" class="input input-bordered input-sm" placeholder="مثلاً SSD 256" />
+          <input v-model="store.filters.hdd" @input="debouncedApply" class="input input-bordered input-sm" placeholder="مثلاً SSD 256" />
         </div>
 
         <!-- Net Type -->
@@ -90,19 +100,19 @@ function apply() {
         <!-- Person -->
         <div class="form-control">
           <label class="label py-1"><span class="label-text text-xs">پرسنل</span></label>
-          <input v-model="store.filters.person" @input="apply" class="input input-bordered input-sm" placeholder="نام یا کد ملی" />
+          <input v-model="store.filters.person" @input="debouncedApply" class="input input-bordered input-sm" placeholder="نام یا کد ملی" />
         </div>
 
         <!-- Unit -->
         <div class="form-control">
           <label class="label py-1"><span class="label-text text-xs">واحد سازمانی</span></label>
-          <input v-model="store.filters.unit" @input="apply" class="input input-bordered input-sm" placeholder="نام واحد" />
+          <input v-model="store.filters.unit" @input="debouncedApply" class="input input-bordered input-sm" placeholder="نام واحد" />
         </div>
 
         <!-- Semat -->
         <div class="form-control">
           <label class="label py-1"><span class="label-text text-xs">سمت</span></label>
-          <input v-model="store.filters.semat" @input="apply" class="input input-bordered input-sm" placeholder="نام سمت" />
+          <input v-model="store.filters.semat" @input="debouncedApply" class="input input-bordered input-sm" placeholder="نام سمت" />
         </div>
       </div>
     </div>

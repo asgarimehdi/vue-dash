@@ -61,6 +61,34 @@ const currentPage = computed(() => store.meta?.current_page || 1)
 async function goToPage(page: number) {
   await store.fetchAll({ page })
 }
+
+// Smart pagination
+const MAX_VISIBLE_PAGES = 7
+
+const paginationPages = computed(() => {
+  const last = totalPages.value
+  const current = currentPage.value
+  if (last <= MAX_VISIBLE_PAGES + 2) {
+    return Array.from({ length: last }, (_, i) => i + 1)
+  }
+  let start = Math.max(1, current - Math.floor(MAX_VISIBLE_PAGES / 2))
+  let end = start + MAX_VISIBLE_PAGES - 1
+  if (end > last - 1) {
+    end = last - 1
+    start = Math.max(1, end - MAX_VISIBLE_PAGES + 1)
+  }
+  const pages: number[] = []
+  for (let p = start; p <= end; p++) pages.push(p)
+  return pages
+})
+
+const showEllipsisBefore = computed(() => {
+  return paginationPages.value.length > 0 && paginationPages.value[paginationPages.value.length - 1] < totalPages.value - 1
+})
+
+const showLastPage = computed(() => {
+  return paginationPages.value.length === 0 || paginationPages.value[paginationPages.value.length - 1] < totalPages.value
+})
 </script>
 
 <template>
@@ -181,13 +209,31 @@ async function goToPage(page: number) {
     <div v-if="totalPages > 1" class="flex justify-center mt-6">
       <div class="join">
         <button
-          v-for="p in totalPages"
+          :disabled="currentPage <= 1"
+          @click="goToPage(currentPage - 1)"
+          class="join-item btn btn-sm"
+        >‹</button>
+        <button
+          v-for="p in paginationPages"
           :key="p"
           @click="goToPage(p)"
           :class="['join-item btn btn-sm', p === currentPage ? 'btn-primary' : 'btn-ghost']"
-        >
-          {{ p }}
-        </button>
+        >{{ p }}</button>
+        <button
+          v-if="showEllipsisBefore"
+          class="join-item btn btn-sm btn-ghost disabled:opacity-40"
+          disabled
+        >...</button>
+        <button
+          v-if="showLastPage"
+          @click="goToPage(totalPages)"
+          :class="['join-item btn btn-sm', totalPages === currentPage ? 'btn-primary' : 'btn-ghost']"
+        >{{ totalPages }}</button>
+        <button
+          :disabled="currentPage >= totalPages"
+          @click="goToPage(currentPage + 1)"
+          class="join-item btn btn-sm"
+        >›</button>
       </div>
     </div>
   </div>
