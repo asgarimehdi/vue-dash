@@ -89,17 +89,20 @@ async function save() {
       endAt = `${endAt} 00:00:00`
     }
 
-    const payload = {
-      title: form.value.title,
-      start_at: startAt,
-      end_at: endAt || null,
-      unit_id: form.value.unit_id || undefined,
-    }
-
     if (editingId.value) {
-      await store.update(editingId.value, payload as any)
+      await store.update(editingId.value, {
+        title: form.value.title,
+        start_at: startAt,
+        end_at: endAt || undefined,
+        unit_id: form.value.unit_id || undefined,
+      })
     } else {
-      await store.create(payload as any)
+      await store.create({
+        title: form.value.title,
+        start_at: startAt,
+        end_at: endAt || '',
+        unit_id: form.value.unit_id || null,
+      })
     }
 
     showModal.value = false

@@ -109,15 +109,6 @@ export function jalaliToIso(jalaliStr: string): string {
 }
 
 /**
- * تبدیل تاریخ شمسی به میلادی با ساعت (برای start_at و end_at کامل)
- */
-export function jalaliToIsoWithTime(jalaliDate: string, time: string = '00:00'): string {
-  const iso = jalaliToIso(jalaliDate)
-  if (iso === jalaliDate) return jalaliDate // conversion failed
-  return `${iso}T${time}:00`
-}
-
-/**
  * تبدیل تاریخ میلادی (2024-09-05) به شمسی (۱۴۰۳/۰۶/۱۵)
  */
 export function isoToJalali(isoStr: string | null): string {
@@ -177,19 +168,6 @@ export function isJalaliDate(str: string): boolean {
   if (isNaN(year)) return false
   // سال شمسی بین 1200 تا 1500 هست
   return year >= 1200 && year <= 1500
-}
-
-/**
- * Format date for input[type=date] (ISO)
- */
-export function toDateInputValue(dateStr: string | null): string {
-  if (!dateStr) return ''
-  // اگر شمسی بود تبدیل کن
-  if (isJalaliDate(dateStr)) {
-    return jalaliToIso(dateStr)
-  }
-  const d = new Date(dateStr)
-  return d.toISOString().split('T')[0]
 }
 
 export const HARDWARE_TYPE_LABELS: Record<string, string> = {

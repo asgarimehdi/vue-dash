@@ -36,9 +36,9 @@ onMounted(async () => {
 })
 
 async function applyFilter() {
-  const params: any = { page: 1 }
-  if (filterStatus.value) params.status = filterStatus.value
-  if (filterPriority.value) params.priority = filterPriority.value
+  const params: Parameters<typeof store.fetchAll>[0] = { page: 1 }
+  if (filterStatus.value) params.status = filterStatus.value as TicketStatus
+  if (filterPriority.value) params.priority = filterPriority.value as TicketPriority
   if (filterAssignedToMe.value) params.assigned_to_me = true
   await store.fetchAll(params)
 }

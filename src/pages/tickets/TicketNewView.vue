@@ -34,7 +34,7 @@ async function handleSubmit() {
   error.value = ''
 
   try {
-    const payload: any = {
+    const payload: Parameters<typeof store.create>[0] = {
       subject: form.value.subject,
       content: form.value.content,
       priority: form.value.priority,

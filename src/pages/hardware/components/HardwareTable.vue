@@ -70,7 +70,7 @@ const columns = [
   { key: 'cpu', label: 'CPU' },
   { key: 'ram', label: 'RAM' },
   { key: 'hdd', label: 'HDD' },
-  { key: 'person?.name', label: 'پرسنل' },
+  { key: 'person.name', label: 'پرسنل' },
 ]
 </script>
 
