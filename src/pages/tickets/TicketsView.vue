@@ -2,13 +2,11 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useTicketStore } from '@/stores/TicketStore'
-import { useUnitStore } from '@/stores/units'
 import { formatJalali } from '@/utils/helpers'
 import type { TicketStatus, TicketPriority } from '@/types/api'
 
 const router = useRouter()
 const store = useTicketStore()
-const unitStore = useUnitStore()
 
 const filterStatus = ref<string>('')
 const filterPriority = ref<string>('')
@@ -28,11 +26,8 @@ const priorityConfig: Record<string, { label: string; color: string }> = {
   low:    { label: 'کم', color: 'text-base-content/50' },
 }
 
-onMounted(async () => {
-  await Promise.all([
-    store.fetchAll(),
-    unitStore.fetchAllUnits(),
-  ])
+onMounted(() => {
+  store.fetchAll()
 })
 
 async function applyFilter() {

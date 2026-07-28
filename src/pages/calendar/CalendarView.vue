@@ -413,10 +413,10 @@ onBeforeUnmount(() => {
   border-color: var(--color-primary);
 }
 :deep(.fc .fc-button-primary:hover) {
-  background-color: var(--color-primary-focus);
+  background-color: color-mix(in srgb, var(--color-primary) 85%, black);
 }
 :deep(.fc .fc-button-primary:not(:disabled).fc-button-active) {
-  background-color: var(--color-primary-focus);
+  background-color: color-mix(in srgb, var(--color-primary) 85%, black);
 }
 :deep(.fc .fc-daygrid-event) {
   border-radius: 4px;

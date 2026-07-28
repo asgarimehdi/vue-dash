@@ -21,7 +21,6 @@
     "@fullcalendar/interaction": "^6.1.21",
     "@fullcalendar/list": "^6.1.21",
     "@fullcalendar/timegrid": "^6.1.21",
-    "@fullcalendar/vue3": "^7.0.2",
     "axios": "^1.18.1",
     "jalaali-js": "^2.0.0",
     "jalalidatepicker": "^0.6.0",
