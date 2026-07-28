@@ -39,7 +39,7 @@ async function sendMessage() {
       : data.message || 'پاسخی دریافت نشد'
 
     messages.value.push({ role: 'assistant', content: reply, timestamp: new Date() })
-  } catch (e: any) {
+  } catch {
     messages.value.push({
       role: 'assistant',
       content: '⚠️ خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.',

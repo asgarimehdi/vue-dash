@@ -119,6 +119,7 @@ async function toggleTodo(id: number) {
   const result = await store.toggleComplete(id)
   if (result === null) {
     formError.value = 'خطا در تغییر وضعیت'
+    return
   }
   await load()
 }
@@ -128,7 +129,8 @@ async function deleteTodo(id: number) {
   try {
     await store.remove(id)
   } catch {
-    // User-facing error already handled silently
+    formError.value = 'خطا در حذف وظیفه'
+    return
   }
   closeModal()
   await load()
