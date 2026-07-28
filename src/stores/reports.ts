@@ -16,7 +16,7 @@ export const useReportStore = defineStore('reports', () => {
     try {
       const { data } = await api.get('/reports/units')
       unitReport.value = data
-    } catch (e: any) {
+    } catch {
       error.value = 'خطا در دریافت آمار واحدها'
       unitReport.value = null
     } finally {
@@ -30,7 +30,7 @@ export const useReportStore = defineStore('reports', () => {
     try {
       const { data } = await api.get('/reports/todos')
       todoReport.value = data
-    } catch (e: any) {
+    } catch {
       error.value = 'خطا در دریافت آمار وظایف'
       todoReport.value = null
     } finally {
@@ -44,7 +44,7 @@ export const useReportStore = defineStore('reports', () => {
     try {
       const { data } = await api.get('/reports/tickets')
       ticketReport.value = data
-    } catch (e: any) {
+    } catch {
       error.value = 'خطا در دریافت آمار تیکت‌ها'
       ticketReport.value = null
     } finally {
@@ -64,7 +64,7 @@ export const useReportStore = defineStore('reports', () => {
       unitReport.value = units.data
       todoReport.value = todos.data
       ticketReport.value = tickets.data
-    } catch (e: any) {
+    } catch {
       error.value = 'خطا در دریافت گزارشات'
     } finally {
       loading.value = false

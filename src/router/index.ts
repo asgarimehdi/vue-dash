@@ -47,6 +47,12 @@ const router = createRouter({
       meta: { requiresAuth: true, title: 'گزارشات' },
     },
     {
+      path: '/persons',
+      name: 'persons',
+      component: () => import('@/pages/persons/PersonsView.vue'),
+      meta: { requiresAuth: true, title: 'پرسنل' },
+    },
+    {
       path: '/tickets',
       name: 'tickets',
       component: () => import('@/pages/tickets/TicketsView.vue'),
