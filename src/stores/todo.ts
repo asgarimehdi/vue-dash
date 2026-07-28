@@ -38,11 +38,12 @@ export const useTodoStore = defineStore('todo', () => {
     }
   }
 
-  async function remove(id: number) {
+  async function remove(id: number): Promise<boolean> {
     try {
       await api.delete(`/todos/${id}`)
+      return true
     } catch {
-      // Component caller handles user-facing feedback
+      return false
     }
   }
 

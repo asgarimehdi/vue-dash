@@ -92,20 +92,15 @@ async function handleSubmit() {
     payload.clean_at = jalaliToIso(payload.clean_at)
   }
 
-  try {
-    if (props.editId) {
-      const result = await store.update(props.editId, payload)
-      if (!result) { error.value = 'خطا در بروزرسانی'; return }
-    } else {
-      const result = await store.create(payload)
-      if (!result) { error.value = 'خطا در ایجاد'; return }
-    }
-    emit('saved')
-  } catch (e: any) {
-    error.value = e?.response?.data?.message || e?.response?.data?.error || 'خطا در ذخیره‌سازی'
-  } finally {
-    saving.value = false
+  if (props.editId) {
+    const result = await store.update(props.editId, payload)
+    if (!result) { error.value = 'خطا در بروزرسانی'; saving.value = false; return }
+  } else {
+    const result = await store.create(payload)
+    if (!result) { error.value = 'خطا در ایجاد'; saving.value = false; return }
   }
+  saving.value = false
+  emit('saved')
 }
 </script>
 

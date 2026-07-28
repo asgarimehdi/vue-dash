@@ -128,7 +128,11 @@ async function toggleTodo(id: number) {
 
 async function deleteTodo(id: number) {
   if (!confirm('آیا از حذف این وظیفه اطمینان دارید؟')) return
-  await store.remove(id)
+  const ok = await store.remove(id)
+  if (!ok) {
+    formError.value = 'خطا در حذف'
+    return
+  }
   closeModal()
   await load()
 }

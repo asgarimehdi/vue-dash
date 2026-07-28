@@ -33,30 +33,25 @@ async function handleSubmit() {
   saving.value = true
   error.value = ''
 
-  try {
-    const payload: Parameters<typeof store.create>[0] = {
-      subject: form.value.subject,
-      content: form.value.content,
-      priority: form.value.priority,
-      unit_id: form.value.unit_id,
-    }
-    if (form.value.deadline) {
-      payload.deadline = isJalaliDate(form.value.deadline)
-        ? jalaliToIso(form.value.deadline)
-        : form.value.deadline
-    }
-
-    const result = await store.create(payload)
-    if (result) {
-      router.push(`/tickets/${result.id}`)
-    } else {
-      error.value = 'خطا در ایجاد تیکت'
-    }
-  } catch (e: any) {
-    error.value = e?.response?.data?.message || 'خطا در ایجاد تیکت'
-  } finally {
-    saving.value = false
+  const payload: Parameters<typeof store.create>[0] = {
+    subject: form.value.subject,
+    content: form.value.content,
+    priority: form.value.priority,
+    unit_id: form.value.unit_id,
   }
+  if (form.value.deadline) {
+    payload.deadline = isJalaliDate(form.value.deadline)
+      ? jalaliToIso(form.value.deadline)
+      : form.value.deadline
+  }
+
+  const result = await store.create(payload)
+  if (result) {
+    router.push(`/tickets/${result.id}`)
+  } else {
+    error.value = 'خطا در ایجاد تیکت'
+  }
+  saving.value = false
 }
 </script>
 

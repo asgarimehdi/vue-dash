@@ -86,27 +86,30 @@ export const useHardwareStore = defineStore('hardware', () => {
     }
   }
 
-  async function remove(id: number) {
+  async function remove(id: number): Promise<boolean> {
     try {
       await api.delete(`/hardware/${id}`)
+      return true
     } catch {
-      // Component caller handles user-facing feedback
+      return false
     }
   }
 
-  async function bulkDelete(ids: number[]) {
+  async function bulkDelete(ids: number[]): Promise<boolean> {
     try {
       await api.post('/hardware/bulk-delete', { ids })
+      return true
     } catch {
-      // Component caller handles user-facing feedback
+      return false
     }
   }
 
-  async function bulkMark(ids: number[], mark: boolean) {
+  async function bulkMark(ids: number[], mark: boolean): Promise<boolean> {
     try {
       await api.post('/hardware/bulk-mark', { ids, mark })
+      return true
     } catch {
-      // Component caller handles user-facing feedback
+      return false
     }
   }
 

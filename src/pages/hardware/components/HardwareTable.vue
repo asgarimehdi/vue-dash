@@ -19,7 +19,8 @@ function sortIcon(field: string): string {
 
 async function removeOne(id: number) {
   if (!confirm('آیا از حذف این آیتم اطمینان دارید؟')) return
-  await store.remove(id)
+  const ok = await store.remove(id)
+  if (!ok) return
   await store.fetchList()
 }
 

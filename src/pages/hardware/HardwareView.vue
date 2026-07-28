@@ -35,13 +35,15 @@ async function onSaved() {
 async function onBulkDelete() {
   const count = store.selectedIds.size
   if (!confirm(`آیا از حذف ${count} آیتم اطمینان دارید؟`)) return
-  await store.bulkDelete([...store.selectedIds])
+  const ok = await store.bulkDelete([...store.selectedIds])
+  if (!ok) return
   store.clearSelection()
   await store.fetchList()
 }
 
 async function onBulkMark(mark: boolean) {
-  await store.bulkMark([...store.selectedIds], mark)
+  const ok = await store.bulkMark([...store.selectedIds], mark)
+  if (!ok) return
   store.clearSelection()
   await store.fetchList()
 }

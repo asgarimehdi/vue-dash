@@ -247,57 +247,52 @@ async function saveTodo() {
   saving.value = true
   formError.value = ''
 
-  try {
-    // تاریخ شمسی رو به میلادی با فرمت YYYY-MM-DD HH:mm:ss تبدیل کن
-    const startDate = isJalaliDate(formStartDate.value)
-      ? jalaliToIso(formStartDate.value)
-      : formStartDate.value
-    
-    const startTime = formStartTime.value || '00:00'
-    const startAt = `${startDate} ${startTime}:00`
+  // تاریخ شمسی رو به میلادی با فرمت YYYY-MM-DD HH:mm:ss تبدیل کن
+  const startDate = isJalaliDate(formStartDate.value)
+    ? jalaliToIso(formStartDate.value)
+    : formStartDate.value
+  
+  const startTime = formStartTime.value || '00:00'
+  const startAt = `${startDate} ${startTime}:00`
 
-    let endAt = startAt
-    if (formEndDate.value) {
-      const endDate = isJalaliDate(formEndDate.value)
-        ? jalaliToIso(formEndDate.value)
-        : formEndDate.value
-      const endTime = formEndTime.value || '00:00'
-      endAt = `${endDate} ${endTime}:00`
-    }
-
-    if (editingId.value) {
-      const result = await todoStore.update(editingId.value, {
-        title: formTitle.value,
-        start_at: startAt,
-        end_at: endAt,
-      })
-      if (!result) { formError.value = 'خطا در بروزرسانی'; return }
-    } else {
-      const result = await todoStore.create({
-        title: formTitle.value,
-        start_at: startAt,
-        end_at: endAt,
-        unit_id: null,
-      })
-      if (!result) { formError.value = 'خطا در ایجاد'; return }
-    }
-
-    showModal.value = false
-    resetForm()
-    await refreshEvents()
-  } catch (e: any) {
-    formError.value = e?.response?.data?.message || e?.response?.data?.error || 'خطا در ذخیره‌سازی'
-    console.error('Save error:', e?.response?.data || e)
-  } finally {
-    saving.value = false
+  let endAt = startAt
+  if (formEndDate.value) {
+    const endDate = isJalaliDate(formEndDate.value)
+      ? jalaliToIso(formEndDate.value)
+      : formEndDate.value
+    const endTime = formEndTime.value || '00:00'
+    endAt = `${endDate} ${endTime}:00`
   }
+
+  if (editingId.value) {
+    const result = await todoStore.update(editingId.value, {
+      title: formTitle.value,
+      start_at: startAt,
+      end_at: endAt,
+    })
+    if (!result) { formError.value = 'خطا در بروزرسانی'; saving.value = false; return }
+  } else {
+    const result = await todoStore.create({
+      title: formTitle.value,
+      start_at: startAt,
+      end_at: endAt,
+      unit_id: null,
+    })
+    if (!result) { formError.value = 'خطا در ایجاد'; saving.value = false; return }
+  }
+
+  showModal.value = false
+  resetForm()
+  await refreshEvents()
+  saving.value = false
 }
 
 async function deleteTodo() {
   if (!editingId.value) return
   if (!confirm('آیا از حذف این وظیفه اطمینان دارید؟')) return
   try {
-    await todoStore.remove(editingId.value)
+    const ok = await todoStore.remove(editingId.value)
+    if (!ok) { formError.value = 'خطا در حذف'; return }
   } catch {
     formError.value = 'خطا در حذف'
     return
