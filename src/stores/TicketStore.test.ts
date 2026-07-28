@@ -104,7 +104,7 @@ describe('useTicketStore', () => {
     const store = useTicketStore()
     const result = await store.assign(1, 2)
 
-    expect(api.post).toHaveBeenCalledWith('/tickets/1/assign', { user_id: 2 })
+    expect(api.post).toHaveBeenCalledWith('/tickets/1/assign', { assignee_id: 2 })
     expect(result?.status).toBe('forwarded')
   })
 
