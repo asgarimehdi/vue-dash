@@ -31,11 +31,7 @@ onMounted(() => {
 })
 
 async function applyFilter() {
-  const params: Parameters<typeof store.fetchAll>[0] = { page: 1, per_page: 50 }
-  if (filterStatus.value) params.status = filterStatus.value as TicketStatus
-  if (filterPriority.value) params.priority = filterPriority.value as TicketPriority
-  if (filterAssignedToMe.value) params.assigned_to_me = true
-  await store.fetchAll(params)
+  await store.fetchAll(buildFilterParams(1))
 }
 
 function goToDetail(id: number) {
@@ -53,8 +49,16 @@ function getStatusLabel(status: string): string {
 const totalPages = computed(() => store.meta?.last_page || 1)
 const currentPage = computed(() => store.meta?.current_page || 1)
 
+function buildFilterParams(page: number): Parameters<typeof store.fetchAll>[0] {
+  const params: Parameters<typeof store.fetchAll>[0] = { page, per_page: 50 }
+  if (filterStatus.value) params.status = filterStatus.value as TicketStatus
+  if (filterPriority.value) params.priority = filterPriority.value as TicketPriority
+  if (filterAssignedToMe.value) params.assigned_to_me = true
+  return params
+}
+
 async function goToPage(page: number) {
-  await store.fetchAll({ page, per_page: 50 })
+  await store.fetchAll(buildFilterParams(page))
 }
 
 // Smart pagination
