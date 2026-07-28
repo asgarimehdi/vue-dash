@@ -23,6 +23,7 @@ export const useTicketStore = defineStore('ticket', () => {
       meta.value = data.meta ?? null
     } catch {
       tickets.value = []
+      meta.value = null
     } finally {
       loading.value = false
     }

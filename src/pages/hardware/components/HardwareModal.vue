@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, watch, onMounted } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useHardwareStore } from '@/stores/hardware'
 import { maskIP, maskMAC, jalaliToIso, isJalaliDate } from '@/utils/helpers'
 import JalaliDatePicker from '@/components/JalaliDatePicker.vue'
@@ -68,11 +68,6 @@ onMounted(async () => {
       error.value = 'خطا در بارگذاری اطلاعات'
     }
   }
-})
-
-// IP/MAC masking is applied on blur to avoid cursor-jump issues during typing.
-watch(() => form.ip_valid, (val) => {
-  if (val && !val.includes('.') && val.length > 3) form.ip_valid = maskIP(val)
 })
 
 function onBlurIP() {

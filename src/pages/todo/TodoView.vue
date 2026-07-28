@@ -4,7 +4,7 @@ import { useTodoStore } from '@/stores/todo'
 import { useUnitStore } from '@/stores/units'
 import { formatJalali, jalaliToIso, isJalaliDate } from '@/utils/helpers'
 import JalaliDatePicker from '@/components/JalaliDatePicker.vue'
-import type { TodoFormData } from '@/types/api'
+import type { Todo, TodoFormData } from '@/types/api'
 
 const store = useTodoStore()
 const unitStore = useUnitStore()
@@ -49,7 +49,7 @@ function openCreate() {
   showModal.value = true
 }
 
-function openEdit(todo: any) {
+function openEdit(todo: Todo) {
   editingId.value = todo.id
   modalKey.value++
   form.value = {

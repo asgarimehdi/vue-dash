@@ -2,7 +2,7 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useTodoStore } from '@/stores/todo'
 import { useTicketStore } from '@/stores/TicketStore'
-import { formatJalali, isoToJalali, jalaliToIso, isJalaliDate } from '@/utils/helpers'
+import { isoToJalali, jalaliToIso, isJalaliDate } from '@/utils/helpers'
 import JalaliDatePicker from '@/components/JalaliDatePicker.vue'
 import type { Todo } from '@/types/api'
 import { Calendar } from '@fullcalendar/core'
@@ -38,16 +38,6 @@ const eventColors = {
   ticketUrgent: '#ef4444',  // red
   ticketNormal: '#f59e0b',  // amber
   ticketLow: '#6b7280',     // gray
-}
-
-async function loadEvents(startStr?: string, endStr?: string) {
-  await todoStore.fetchList()
-  try {
-    await ticketStore.fetchAll()
-  } catch {
-    // Ticket store might not exist, do nothing
-  }
-  return buildEvents()
 }
 
 function buildEvents(): any[] {
