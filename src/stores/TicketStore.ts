@@ -72,18 +72,30 @@ export const useTicketStore = defineStore('ticket', () => {
   }
 
   async function assign(ticketId: number, userId: number): Promise<Ticket | null> {
-    const { data } = await api.post(`/tickets/${ticketId}/assign`, { user_id: userId })
-    return data.data ?? null
+    try {
+      const { data } = await api.post(`/tickets/${ticketId}/assign`, { user_id: userId })
+      return data.data ?? null
+    } catch {
+      return null
+    }
   }
 
   async function accept(ticketId: number): Promise<Ticket | null> {
-    const { data } = await api.post(`/tickets/${ticketId}/accept`)
-    return data.data ?? null
+    try {
+      const { data } = await api.post(`/tickets/${ticketId}/accept`)
+      return data.data ?? null
+    } catch {
+      return null
+    }
   }
 
   async function complete(ticketId: number): Promise<Ticket | null> {
-    const { data } = await api.post(`/tickets/${ticketId}/complete`)
-    return data.data ?? null
+    try {
+      const { data } = await api.post(`/tickets/${ticketId}/complete`)
+      return data.data ?? null
+    } catch {
+      return null
+    }
   }
 
   return {

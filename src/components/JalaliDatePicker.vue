@@ -41,17 +41,24 @@ onMounted(async () => {
       ;(mod as any).jalaliDatepicker.startWatch()
     }
 
-    inputRef.value.addEventListener('change', () => {
-      if (inputRef.value) internalValue.value = inputRef.value.value
-    })
-
-    inputRef.value.addEventListener('jdp:change', (e: any) => {
-      internalValue.value = e.detail?.value || e.target?.value || ''
-    })
+    inputRef.value.addEventListener('change', onChangeHandler)
+    inputRef.value.addEventListener('jdp:change', onJdpChange as EventListener)
   }
 })
 
+function onChangeHandler() {
+  if (inputRef.value) internalValue.value = inputRef.value.value
+}
+
+function onJdpChange(e: any) {
+  internalValue.value = e.detail?.value || e.target?.value || ''
+}
+
 onBeforeUnmount(() => {
+  if (inputRef.value) {
+    inputRef.value.removeEventListener('change', onChangeHandler)
+    inputRef.value.removeEventListener('jdp:change', onJdpChange as EventListener)
+  }
   if (cssLink.value?.parentNode) {
     cssLink.value.parentNode.removeChild(cssLink.value)
   }

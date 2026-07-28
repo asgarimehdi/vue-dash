@@ -35,15 +35,23 @@ async function onSaved() {
 async function onBulkDelete() {
   const count = store.selectedIds.size
   if (!confirm(`آیا از حذف ${count} آیتم اطمینان دارید؟`)) return
-  await store.bulkDelete([...store.selectedIds])
-  store.clearSelection()
-  await store.fetchList()
+  try {
+    await store.bulkDelete([...store.selectedIds])
+    store.clearSelection()
+    await store.fetchList()
+  } catch {
+    alert('خطا در حذف آیتم‌ها')
+  }
 }
 
 async function onBulkMark(mark: boolean) {
-  await store.bulkMark([...store.selectedIds], mark)
-  store.clearSelection()
-  await store.fetchList()
+  try {
+    await store.bulkMark([...store.selectedIds], mark)
+    store.clearSelection()
+    await store.fetchList()
+  } catch {
+    alert('خطا در اعمال تغییرات')
+  }
 }
 
 function onQuickFilter(ff: Partial<HardwareFiltersType>) {

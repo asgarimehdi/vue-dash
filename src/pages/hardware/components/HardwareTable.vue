@@ -70,7 +70,7 @@ const columns = [
   { key: 'cpu', label: 'CPU' },
   { key: 'ram', label: 'RAM' },
   { key: 'hdd', label: 'HDD' },
-  { key: 'person.name', label: 'پرسنل' },
+  { key: 'person.name', label: 'پرسنل', nosort: true },
 ]
 </script>
 
@@ -89,9 +89,11 @@ const columns = [
               @change="emit('toggle-select-all')"
             />
           </th>
-          <th v-for="col in columns" :key="col.key" class="cursor-pointer select-none" @click="sortField(col.key)">
+          <th v-for="col in columns" :key="col.key"
+            :class="{ 'cursor-pointer select-none': !col.nosort }"
+            @click="!col.nosort && sortField(col.key)">
             {{ col.label }}
-            <span class="text-xs opacity-50">{{ sortIcon(col.key) }}</span>
+            <span v-if="!col.nosort" class="text-xs opacity-50">{{ sortIcon(col.key) }}</span>
           </th>
           <th class="w-24">عملیات</th>
         </tr>

@@ -12,6 +12,7 @@ const store = useTicketStore()
 const ticket = ref<Ticket | null>(null)
 const loading = ref(true)
 const assigning = ref(false)
+const actionError = ref('')
 const assignUserId = ref('')
 
 const statusConfig: Record<string, { label: string; icon: string; color: string }> = {
@@ -30,14 +31,18 @@ onMounted(async () => {
 
 async function handleAccept() {
   if (!ticket.value) return
+  actionError.value = ''
   const result = await store.accept(ticket.value.id)
   if (result) ticket.value = result
+  else actionError.value = 'خطا در قبول تیکت'
 }
 
 async function handleComplete() {
   if (!ticket.value) return
+  actionError.value = ''
   const result = await store.complete(ticket.value.id)
   if (result) ticket.value = result
+  else actionError.value = 'خطا در تکمیل تیکت'
 }
 
 async function handleAssign() {
@@ -142,6 +147,7 @@ async function handleAssign() {
 
           <!-- Actions -->
           <div class="space-y-2">
+            <div v-if="actionError" class="alert alert-error text-sm py-2">{{ actionError }}</div>
             <!-- Accept -->
             <button
               v-if="ticket.status === 'forwarded'"
