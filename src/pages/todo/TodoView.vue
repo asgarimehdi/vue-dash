@@ -72,49 +72,43 @@ async function save() {
   saving.value = true
   formError.value = ''
 
-  try {
-    let startAt = form.value.start_at
-    if (startAt && isJalaliDate(startAt)) {
-      startAt = jalaliToIso(startAt)
-    }
-    if (startAt && !startAt.includes(' ')) {
-      startAt = `${startAt} 00:00:00`
-    }
-
-    let endAt = form.value.end_at
-    if (endAt && isJalaliDate(endAt)) {
-      endAt = jalaliToIso(endAt)
-    }
-    if (endAt && !endAt.includes(' ')) {
-      endAt = `${endAt} 00:00:00`
-    }
-
-    if (editingId.value) {
-      const result = await store.update(editingId.value, {
-        title: form.value.title,
-        start_at: startAt,
-        end_at: endAt || undefined,
-        unit_id: form.value.unit_id || undefined,
-      })
-      if (!result) { formError.value = 'خطا در بروزرسانی'; return }
-    } else {
-      const result = await store.create({
-        title: form.value.title,
-        start_at: startAt,
-        end_at: endAt || '',
-        unit_id: form.value.unit_id || null,
-      })
-      if (!result) { formError.value = 'خطا در ایجاد'; return }
-    }
-
-    showModal.value = false
-    await load()
-  } catch (e: any) {
-    formError.value = e?.response?.data?.message || e?.response?.data?.error || 'خطا در ذخیره‌سازی'
-    console.error('Save error:', e?.response?.data || e)
-  } finally {
-    saving.value = false
+  let startAt = form.value.start_at
+  if (startAt && isJalaliDate(startAt)) {
+    startAt = jalaliToIso(startAt)
   }
+  if (startAt && !startAt.includes(' ')) {
+    startAt = `${startAt} 00:00:00`
+  }
+
+  let endAt = form.value.end_at
+  if (endAt && isJalaliDate(endAt)) {
+    endAt = jalaliToIso(endAt)
+  }
+  if (endAt && !endAt.includes(' ')) {
+    endAt = `${endAt} 00:00:00`
+  }
+
+  if (editingId.value) {
+    const result = await store.update(editingId.value, {
+      title: form.value.title,
+      start_at: startAt,
+      end_at: endAt || undefined,
+      unit_id: form.value.unit_id || undefined,
+    })
+    if (!result) { formError.value = 'خطا در بروزرسانی'; saving.value = false; return }
+  } else {
+    const result = await store.create({
+      title: form.value.title,
+      start_at: startAt,
+      end_at: endAt || '',
+      unit_id: form.value.unit_id || null,
+    })
+    if (!result) { formError.value = 'خطا در ایجاد'; saving.value = false; return }
+  }
+
+  showModal.value = false
+  await load()
+  saving.value = false
 }
 
 async function toggleTodo(id: number) {

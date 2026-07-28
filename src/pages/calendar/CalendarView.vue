@@ -60,7 +60,7 @@ function buildEvents(): EventInput[] {
   }
 
   // Ticket events (if available)
-  if (ticketStore.tickets) {
+  if (ticketStore.tickets.length > 0) {
     for (const ticket of ticketStore.tickets) {
       const priorityColors: Record<string, string> = {
         urgent: eventColors.ticketUrgent,

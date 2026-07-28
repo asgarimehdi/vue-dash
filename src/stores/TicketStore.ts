@@ -67,11 +67,12 @@ export const useTicketStore = defineStore('ticket', () => {
     }
   }
 
-  async function remove(id: number) {
+  async function remove(id: number): Promise<boolean> {
     try {
       await api.delete(`/tickets/${id}`)
+      return true
     } catch {
-      // Component caller handles user-facing feedback
+      return false
     }
   }
 
