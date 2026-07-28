@@ -43,30 +43,30 @@ const form = reactive<HardwareFormData>({
 // Load data if editing
 onMounted(async () => {
   if (props.editId) {
-    try {
-      const item = await store.fetchOne(props.editId)
-      form.n_code = item.n_code
-      form.pc_name = item.pc_name
-      form.type = item.type || 'pc'
-      form.os = item.os
-      form.ip_valid = item.ip_valid
-      form.ip_local = item.ip_local
-      form.mac = item.mac
-      form.net_type = item.net_type || 'wired'
-      form.switch = item.switch
-      form.port = item.port
-      form.shutdown = item.shutdown
-      form.vlan = item.vlan
-      form.motherboard = item.motherboard
-      form.cpu = item.cpu
-      form.ram = item.ram
-      form.hdd = item.hdd
-      form.comments = item.comments
-      form.mark = item.mark
-      form.clean_at = item.clean_at || ''
-    } catch {
+    const item = await store.fetchOne(props.editId)
+    if (!item) {
       error.value = 'خطا در بارگذاری اطلاعات'
+      return
     }
+    form.n_code = item.n_code
+    form.pc_name = item.pc_name
+    form.type = item.type || 'pc'
+    form.os = item.os
+    form.ip_valid = item.ip_valid
+    form.ip_local = item.ip_local
+    form.mac = item.mac
+    form.net_type = item.net_type || 'wired'
+    form.switch = item.switch
+    form.port = item.port
+    form.shutdown = item.shutdown
+    form.vlan = item.vlan
+    form.motherboard = item.motherboard
+    form.cpu = item.cpu
+    form.ram = item.ram
+    form.hdd = item.hdd
+    form.comments = item.comments
+    form.mark = item.mark
+    form.clean_at = item.clean_at || ''
   }
 })
 
@@ -94,13 +94,15 @@ async function handleSubmit() {
 
   try {
     if (props.editId) {
-      await store.update(props.editId, payload)
+      const result = await store.update(props.editId, payload)
+      if (!result) { error.value = 'خطا در بروزرسانی'; return }
     } else {
-      await store.create(payload)
+      const result = await store.create(payload)
+      if (!result) { error.value = 'خطا در ایجاد'; return }
     }
     emit('saved')
   } catch (e: any) {
-    error.value = e.response?.data?.message || e.response?.data?.error || 'خطا در ذخیره‌سازی'
+    error.value = e?.response?.data?.message || e?.response?.data?.error || 'خطا در ذخیره‌سازی'
   } finally {
     saving.value = false
   }

@@ -56,7 +56,17 @@ describe('useHardwareStore', () => {
     const result = await store.fetchOne(1)
 
     expect(api.get).toHaveBeenCalledWith('/hardware/1')
-    expect(result.pc_name).toBe('PC-001')
+    expect(result).not.toBeNull()
+    expect(result!.pc_name).toBe('PC-001')
+  })
+
+  it('handles fetchOne failure', async () => {
+    vi.mocked(api.get).mockRejectedValueOnce(new Error('Not found'))
+
+    const store = useHardwareStore()
+    const result = await store.fetchOne(999)
+
+    expect(result).toBeNull()
   })
 
   it('creates hardware', async () => {
@@ -67,7 +77,17 @@ describe('useHardwareStore', () => {
     const result = await store.create(newItem as any)
 
     expect(api.post).toHaveBeenCalledWith('/hardware', newItem)
-    expect(result.id).toBe(3)
+    expect(result).not.toBeNull()
+    expect(result!.id).toBe(3)
+  })
+
+  it('handles create error', async () => {
+    vi.mocked(api.post).mockRejectedValueOnce(new Error('Network error'))
+
+    const store = useHardwareStore()
+    const result = await store.create({ n_code: '003', pc_name: 'SRV-001', type: 'server' } as any)
+
+    expect(result).toBeNull()
   })
 
   it('updates hardware', async () => {
@@ -77,7 +97,17 @@ describe('useHardwareStore', () => {
     const result = await store.update(1, { pc_name: 'PC-001-UPDATED' })
 
     expect(api.put).toHaveBeenCalledWith('/hardware/1', { pc_name: 'PC-001-UPDATED' })
-    expect(result.pc_name).toBe('PC-001-UPDATED')
+    expect(result).not.toBeNull()
+    expect(result!.pc_name).toBe('PC-001-UPDATED')
+  })
+
+  it('handles update error', async () => {
+    vi.mocked(api.put).mockRejectedValueOnce(new Error('Network error'))
+
+    const store = useHardwareStore()
+    const result = await store.update(1, { pc_name: 'test' })
+
+    expect(result).toBeNull()
   })
 
   it('deletes hardware', async () => {

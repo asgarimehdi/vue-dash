@@ -266,18 +266,20 @@ async function saveTodo() {
     }
 
     if (editingId.value) {
-      await todoStore.update(editingId.value, {
+      const result = await todoStore.update(editingId.value, {
         title: formTitle.value,
         start_at: startAt,
         end_at: endAt,
       })
+      if (!result) { formError.value = 'خطا در بروزرسانی'; return }
     } else {
-      await todoStore.create({
+      const result = await todoStore.create({
         title: formTitle.value,
         start_at: startAt,
         end_at: endAt,
         unit_id: null,
       })
+      if (!result) { formError.value = 'خطا در ایجاد'; return }
     }
 
     showModal.value = false

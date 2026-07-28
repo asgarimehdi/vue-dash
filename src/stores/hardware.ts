@@ -57,20 +57,33 @@ export const useHardwareStore = defineStore('hardware', () => {
     }
   }
 
-  async function fetchOne(id: number): Promise<Hardware> {
-    const { data } = await api.get(`/hardware/${id}`)
-    current.value = data.data ?? data
-    return current.value!
+  async function fetchOne(id: number): Promise<Hardware | null> {
+    try {
+      const { data } = await api.get(`/hardware/${id}`)
+      current.value = data.data ?? data
+      return current.value!
+    } catch {
+      current.value = null
+      return null
+    }
   }
 
-  async function create(payload: HardwareFormData): Promise<Hardware> {
-    const { data } = await api.post('/hardware', payload)
-    return data.data ?? data
+  async function create(payload: HardwareFormData): Promise<Hardware | null> {
+    try {
+      const { data } = await api.post('/hardware', payload)
+      return data.data ?? data
+    } catch {
+      return null
+    }
   }
 
-  async function update(id: number, payload: Partial<HardwareFormData>): Promise<Hardware> {
-    const { data } = await api.put(`/hardware/${id}`, payload)
-    return data.data ?? data
+  async function update(id: number, payload: Partial<HardwareFormData>): Promise<Hardware | null> {
+    try {
+      const { data } = await api.put(`/hardware/${id}`, payload)
+      return data.data ?? data
+    } catch {
+      return null
+    }
   }
 
   async function remove(id: number) {

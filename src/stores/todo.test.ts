@@ -70,7 +70,17 @@ describe('useTodoStore', () => {
     const result = await store.create(newTodo)
 
     expect(api.post).toHaveBeenCalledWith('/todos', newTodo)
-    expect(result.id).toBe(3)
+    expect(result).not.toBeNull()
+    expect(result!.id).toBe(3)
+  })
+
+  it('handles create error', async () => {
+    vi.mocked(api.post).mockRejectedValueOnce(new Error('Network error'))
+
+    const store = useTodoStore()
+    const result = await store.create({ title: 'test', start_at: '2024-01-01', end_at: '', unit_id: null })
+
+    expect(result).toBeNull()
   })
 
   it('updates todo', async () => {
@@ -80,7 +90,17 @@ describe('useTodoStore', () => {
     const result = await store.update(1, { title: 'بروز شده' })
 
     expect(api.put).toHaveBeenCalledWith('/todos/1', { title: 'بروز شده' })
-    expect(result.title).toBe('بروز شده')
+    expect(result).not.toBeNull()
+    expect(result!.title).toBe('بروز شده')
+  })
+
+  it('handles update error', async () => {
+    vi.mocked(api.put).mockRejectedValueOnce(new Error('Network error'))
+
+    const store = useTodoStore()
+    const result = await store.update(1, { title: 'test' })
+
+    expect(result).toBeNull()
   })
 
   it('deletes todo', async () => {

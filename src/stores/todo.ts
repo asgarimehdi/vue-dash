@@ -20,14 +20,22 @@ export const useTodoStore = defineStore('todo', () => {
     }
   }
 
-  async function create(payload: TodoFormData): Promise<Todo> {
-    const { data } = await api.post('/todos', payload)
-    return data.data ?? data
+  async function create(payload: TodoFormData): Promise<Todo | null> {
+    try {
+      const { data } = await api.post('/todos', payload)
+      return data.data ?? data
+    } catch {
+      return null
+    }
   }
 
-  async function update(id: number, payload: Partial<TodoFormData>): Promise<Todo> {
-    const { data } = await api.put(`/todos/${id}`, payload)
-    return data.data ?? data
+  async function update(id: number, payload: Partial<TodoFormData>): Promise<Todo | null> {
+    try {
+      const { data } = await api.put(`/todos/${id}`, payload)
+      return data.data ?? data
+    } catch {
+      return null
+    }
   }
 
   async function remove(id: number) {
