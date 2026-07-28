@@ -4,10 +4,6 @@ export interface LoginRequest {
   password: string
 }
 
-export interface LoginResponse {
-  token: string
-}
-
 export interface User {
   id: number
   n_code: string
@@ -19,26 +15,6 @@ export interface PersonBrief {
   f_name: string
   l_name: string
   n_code: string
-}
-
-/* ===== Person (for relationship) ===== */
-export interface Person {
-  id: number
-  f_name: string
-  l_name: string
-  n_code: string
-  unit?: UnitBrief
-  semat?: SematBrief
-}
-
-export interface UnitBrief {
-  id: number
-  name: string
-}
-
-export interface SematBrief {
-  id: number
-  name: string
 }
 
 /* ===== Hardware ===== */
@@ -136,30 +112,12 @@ export const DEFAULT_HARDWARE_FILTERS: HardwareFilters = {
   sort_dir: 'desc',
 }
 
-/* ===== Quick Filters ===== */
-export interface QuickFilter {
-  label: string
-  icon: string
-  filters: Partial<HardwareFilters>
-}
-
 /* ===== Pagination ===== */
 export interface PaginatedMeta {
   current_page: number
   last_page: number
   per_page: number
   total: number
-}
-
-export interface PaginatedResponse<T> {
-  data: T[]
-  meta: PaginatedMeta
-}
-
-/* ===== Bulk Actions ===== */
-export interface BulkAction {
-  type: 'delete' | 'mark' | 'unmark'
-  ids: number[]
 }
 
 /* ===== Ticket ===== */
@@ -198,6 +156,11 @@ export interface TicketActivity {
 }
 
 /* ===== Unit / Organization ===== */
+export interface UnitBrief {
+  id: number
+  name: string
+}
+
 export interface UnitType {
   id: number
   name: string
