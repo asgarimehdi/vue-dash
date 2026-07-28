@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useUnitStore } from './units'
 import api from '@/utils/api'
+import type { UnitWithTree } from '@/types/api'
 
 vi.mock('@/utils/api', () => ({
   default: {
@@ -86,10 +87,10 @@ describe('useUnitStore', () => {
 
     store.expandAll()
 
-    const checkExpanded = (nodes: any[]) => {
+    const checkExpanded = (nodes: UnitWithTree[]) => {
       for (const n of nodes) {
         expect(n.expanded).toBe(true)
-        if (n.children?.length) checkExpanded(n.children)
+        if (n.children?.length) checkExpanded(n.children as UnitWithTree[])
       }
     }
     checkExpanded(store.treeItems)
@@ -104,10 +105,10 @@ describe('useUnitStore', () => {
     store.expandAll()
     store.collapseAll()
 
-    const checkCollapsed = (nodes: any[]) => {
+    const checkCollapsed = (nodes: UnitWithTree[]) => {
       for (const n of nodes) {
         expect(n.expanded).toBe(false)
-        if (n.children?.length) checkCollapsed(n.children)
+        if (n.children?.length) checkCollapsed(n.children as UnitWithTree[])
       }
     }
     checkCollapsed(store.treeItems)

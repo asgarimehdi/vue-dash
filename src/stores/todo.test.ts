@@ -99,6 +99,7 @@ describe('useTodoStore', () => {
     const result = await store.toggleComplete(1)
 
     expect(api.post).toHaveBeenCalledWith('/todos/1/toggle-complete')
-    expect(result.is_completed).toBe(true)
+    expect(result).not.toBeNull()
+    expect(result!.is_completed).toBe(true)
   })
 })

@@ -5,6 +5,7 @@ import { useTicketStore } from '@/stores/TicketStore'
 import { isoToJalali, jalaliToIso, isJalaliDate } from '@/utils/helpers'
 import JalaliDatePicker from '@/components/JalaliDatePicker.vue'
 import { Calendar } from '@fullcalendar/core'
+import type { EventInput } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
@@ -39,8 +40,8 @@ const eventColors = {
   ticketLow: '#6b7280',     // gray
 }
 
-function buildEvents(): any[] {
-  const events: any[] = []
+function buildEvents(): EventInput[] {
+  const events: EventInput[] = []
 
   // Todo events
   for (const todo of todoStore.items) {
@@ -295,8 +296,8 @@ async function deleteTodo() {
   if (!confirm('آیا از حذف این وظیفه اطمینان دارید؟')) return
   try {
     await todoStore.remove(editingId.value)
-  } catch (e: any) {
-    formError.value = e?.response?.data?.message || 'خطا در حذف'
+  } catch {
+    formError.value = 'خطا در حذف'
     return
   }
   showModal.value = false

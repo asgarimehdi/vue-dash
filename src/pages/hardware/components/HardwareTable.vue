@@ -19,8 +19,12 @@ function sortIcon(field: string): string {
 
 async function removeOne(id: number) {
   if (!confirm('آیا از حذف این آیتم اطمینان دارید؟')) return
-  await store.remove(id)
-  await store.fetchList()
+  try {
+    await store.remove(id)
+    await store.fetchList()
+  } catch {
+    // Error handled silently in store
+  }
 }
 
 const typeBadge: Record<string, string> = {

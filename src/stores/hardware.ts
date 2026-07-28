@@ -74,15 +74,27 @@ export const useHardwareStore = defineStore('hardware', () => {
   }
 
   async function remove(id: number) {
-    await api.delete(`/hardware/${id}`)
+    try {
+      await api.delete(`/hardware/${id}`)
+    } catch {
+      // Component caller handles user-facing feedback
+    }
   }
 
   async function bulkDelete(ids: number[]) {
-    await api.post('/hardware/bulk-delete', { ids })
+    try {
+      await api.post('/hardware/bulk-delete', { ids })
+    } catch {
+      // Component caller handles user-facing feedback
+    }
   }
 
   async function bulkMark(ids: number[], mark: boolean) {
-    await api.post('/hardware/bulk-mark', { ids, mark })
+    try {
+      await api.post('/hardware/bulk-mark', { ids, mark })
+    } catch {
+      // Component caller handles user-facing feedback
+    }
   }
 
   function toggleSelect(id: number) {

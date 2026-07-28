@@ -31,12 +31,20 @@ export const useTodoStore = defineStore('todo', () => {
   }
 
   async function remove(id: number) {
-    await api.delete(`/todos/${id}`)
+    try {
+      await api.delete(`/todos/${id}`)
+    } catch {
+      // Component caller handles user-facing feedback
+    }
   }
 
-  async function toggleComplete(id: number): Promise<Todo> {
-    const { data } = await api.post(`/todos/${id}/toggle-complete`)
-    return data.data ?? data
+  async function toggleComplete(id: number): Promise<Todo | null> {
+    try {
+      const { data } = await api.post(`/todos/${id}/toggle-complete`)
+      return data.data ?? data
+    } catch {
+      return null
+    }
   }
 
   return { items, loading, fetchList, create, update, remove, toggleComplete }

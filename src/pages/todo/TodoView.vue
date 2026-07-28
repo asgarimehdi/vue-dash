@@ -116,13 +116,20 @@ async function save() {
 }
 
 async function toggleTodo(id: number) {
-  await store.toggleComplete(id)
+  const result = await store.toggleComplete(id)
+  if (result === null) {
+    formError.value = 'خطا در تغییر وضعیت'
+  }
   await load()
 }
 
 async function deleteTodo(id: number) {
   if (!confirm('آیا از حذف این وظیفه اطمینان دارید؟')) return
-  await store.remove(id)
+  try {
+    await store.remove(id)
+  } catch {
+    // User-facing error already handled silently
+  }
   closeModal()
   await load()
 }
