@@ -220,6 +220,54 @@ export interface TodoFormData {
   unit_id: number | null
 }
 
+/* ===== Reports ===== */
+export interface UnitReport {
+  total: number
+  with_boundary: number
+  without_boundary: number
+  by_type: Record<string, number>
+}
+
+export interface TodoReport {
+  completed: number
+  pending: number
+  overdue: number
+  by_day: Array<{ day: string; count: number }>
+  by_unit: Record<string, number>
+}
+
+export interface TicketReport {
+  total: number
+  by_status: Record<string, number>
+  by_priority: Record<string, number>
+  by_day: Array<{ day: string; count: number }>
+}
+
+/* ===== Person ===== */
+export interface Person {
+  id: number
+  n_code: string
+  f_name: string
+  l_name: string
+  u_id?: number
+  unit?: UnitBrief
+  semat?: SematBrief
+  created_at?: string
+  updated_at?: string
+}
+
+export interface PersonFormData {
+  n_code: string
+  f_name: string
+  l_name: string
+  u_id?: number
+}
+
+export interface SematBrief {
+  id: number
+  name: string
+}
+
 /* ===== AI Chat ===== */
 export interface ChatMessage {
   role: 'user' | 'assistant'

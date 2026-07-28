@@ -41,6 +41,12 @@ const router = createRouter({
       meta: { requiresAuth: true, title: 'مراکز' },
     },
     {
+      path: '/reports',
+      name: 'reports',
+      component: () => import('@/pages/reports/ReportsView.vue'),
+      meta: { requiresAuth: true, title: 'گزارشات' },
+    },
+    {
       path: '/tickets',
       name: 'tickets',
       component: () => import('@/pages/tickets/TicketsView.vue'),

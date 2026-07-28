@@ -10,6 +10,7 @@ const navItems = [
   { name: 'تیکت‌ها', path: '/tickets', icon: '🎫' },
   { name: 'تقویم', path: '/calendar', icon: '📅' },
   { name: 'وظایف (Todo)', path: '/todos', icon: '✅' },
+  { name: 'گزارشات', path: '/reports', icon: '📊' },
   { name: 'چت هوش مصنوعی', path: '/ai-chat', icon: '🤖' },
 ]
 
