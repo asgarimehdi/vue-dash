@@ -290,13 +290,8 @@ async function saveTodo() {
 async function deleteTodo() {
   if (!editingId.value) return
   if (!confirm('آیا از حذف این وظیفه اطمینان دارید؟')) return
-  try {
-    const ok = await todoStore.remove(editingId.value)
-    if (!ok) { formError.value = 'خطا در حذف'; return }
-  } catch {
-    formError.value = 'خطا در حذف'
-    return
-  }
+  const ok = await todoStore.remove(editingId.value)
+  if (!ok) { formError.value = 'خطا در حذف'; return }
   showModal.value = false
   resetForm()
   await refreshEvents()

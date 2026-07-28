@@ -11,6 +11,7 @@ const store = useHardwareStore()
 
 const showModal = ref(false)
 const editingId = ref<number | null>(null)
+const error = ref('')
 
 onMounted(() => {
   store.fetchList()
@@ -36,14 +37,16 @@ async function onBulkDelete() {
   const count = store.selectedIds.size
   if (!confirm(`آیا از حذف ${count} آیتم اطمینان دارید؟`)) return
   const ok = await store.bulkDelete([...store.selectedIds])
-  if (!ok) return
+  if (!ok) { error.value = 'خطا در حذف دسته‌جمعی'; return }
+  error.value = ''
   store.clearSelection()
   await store.fetchList()
 }
 
 async function onBulkMark(mark: boolean) {
   const ok = await store.bulkMark([...store.selectedIds], mark)
-  if (!ok) return
+  if (!ok) { error.value = mark ? 'خطا در علامت‌گذاری دسته‌جمعی' : 'خطا در حذف علامت دسته‌جمعی'; return }
+  error.value = ''
   store.clearSelection()
   await store.fetchList()
 }
@@ -79,6 +82,9 @@ function toggleSelectAll() {
         </button>
       </div>
     </div>
+
+    <!-- Error -->
+    <div v-if="error" class="alert alert-error text-sm mb-4">{{ error }}</div>
 
     <!-- Quick Filters -->
     <div class="flex flex-wrap gap-2 mb-4">
