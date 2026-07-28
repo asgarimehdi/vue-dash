@@ -42,6 +42,7 @@ describe('useTicketStore', () => {
     await store.fetchAll()
 
     expect(store.tickets).toEqual([])
+    expect(store.meta).toBeNull()
   })
 
   it('fetchAll sends filter params', async () => {

@@ -30,7 +30,7 @@ onMounted(() => {
 })
 
 async function load() {
-  const params: any = {}
+  const params: Parameters<typeof store.fetchList>[0] = {}
   if (filter.value === 'pending') params.is_completed = false
   else if (filter.value === 'completed') params.is_completed = true
   if (monthFilter.value) {

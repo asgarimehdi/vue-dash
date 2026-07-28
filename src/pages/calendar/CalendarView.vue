@@ -305,7 +305,10 @@ async function deleteTodo() {
 }
 
 onMounted(async () => {
-  await todoStore.fetchList()
+  await Promise.all([
+    todoStore.fetchList(),
+    ticketStore.fetchAll(),
+  ])
   initCalendar()
 })
 
