@@ -14,6 +14,7 @@ const filter = ref<'all' | 'pending' | 'completed'>('all')
 const monthFilter = ref<string>('')
 const saving = ref(false)
 const formError = ref('')
+const listError = ref('')
 
 const form = ref<TodoFormData>({
   title: '',
@@ -111,9 +112,10 @@ async function save() {
 async function toggleTodo(id: number) {
   const result = await store.toggleComplete(id)
   if (result === null) {
-    formError.value = 'خطا در تغییر وضعیت'
+    listError.value = 'خطا در تغییر وضعیت'
     return
   }
+  listError.value = ''
   await load()
 }
 
@@ -121,9 +123,10 @@ async function deleteTodo(id: number) {
   if (!confirm('آیا از حذف این وظیفه اطمینان دارید؟')) return
   const ok = await store.remove(id)
   if (!ok) {
-    formError.value = 'خطا در حذف'
+    listError.value = 'خطا در حذف'
     return
   }
+  listError.value = ''
   closeModal()
   await load()
 }
@@ -155,6 +158,9 @@ const completedCount = computed(() => store.items.filter(i => i.is_completed).le
       </div>
       <input v-model="monthFilter" type="month" @change="load" class="input input-bordered input-sm" />
     </div>
+
+    <!-- List-level Error -->
+    <div v-if="listError" class="alert alert-error text-sm mb-4">{{ listError }}</div>
 
     <!-- Todo List -->
     <div class="space-y-2">
