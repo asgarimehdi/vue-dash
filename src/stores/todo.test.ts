@@ -112,6 +112,15 @@ describe('useTodoStore', () => {
     expect(api.delete).toHaveBeenCalledWith('/todos/1')
   })
 
+  it('handles delete error', async () => {
+    vi.mocked(api.delete).mockRejectedValueOnce(new Error('Network error'))
+
+    const store = useTodoStore()
+    const result = await store.remove(999)
+
+    expect(result).toBe(false)
+  })
+
   it('toggles todo completion', async () => {
     vi.mocked(api.post).mockResolvedValueOnce({ data: { data: { ...mockTodos[0], is_completed: true } } })
 
@@ -121,5 +130,14 @@ describe('useTodoStore', () => {
     expect(api.post).toHaveBeenCalledWith('/todos/1/toggle-complete')
     expect(result).not.toBeNull()
     expect(result!.is_completed).toBe(true)
+  })
+
+  it('handles toggle error', async () => {
+    vi.mocked(api.post).mockRejectedValueOnce(new Error('Network error'))
+
+    const store = useTodoStore()
+    const result = await store.toggleComplete(999)
+
+    expect(result).toBeNull()
   })
 })

@@ -119,6 +119,15 @@ describe('useHardwareStore', () => {
     expect(api.delete).toHaveBeenCalledWith('/hardware/1')
   })
 
+  it('handles delete error', async () => {
+    vi.mocked(api.delete).mockRejectedValueOnce(new Error('Network error'))
+
+    const store = useHardwareStore()
+    const result = await store.remove(999)
+
+    expect(result).toBe(false)
+  })
+
   it('bulk delete sends to correct endpoint', async () => {
     vi.mocked(api.post).mockResolvedValueOnce({ data: {} })
 
@@ -128,6 +137,15 @@ describe('useHardwareStore', () => {
     expect(api.post).toHaveBeenCalledWith('/hardware/bulk-delete', { ids: [1, 2, 3] })
   })
 
+  it('handles bulk delete error', async () => {
+    vi.mocked(api.post).mockRejectedValueOnce(new Error('Network error'))
+
+    const store = useHardwareStore()
+    const result = await store.bulkDelete([1, 2, 3])
+
+    expect(result).toBe(false)
+  })
+
   it('bulk mark sends to correct endpoint', async () => {
     vi.mocked(api.post).mockResolvedValueOnce({ data: {} })
 
@@ -135,6 +153,15 @@ describe('useHardwareStore', () => {
     await store.bulkMark([1, 2], true)
 
     expect(api.post).toHaveBeenCalledWith('/hardware/bulk-mark', { ids: [1, 2], mark: true })
+  })
+
+  it('handles bulk mark error', async () => {
+    vi.mocked(api.post).mockRejectedValueOnce(new Error('Network error'))
+
+    const store = useHardwareStore()
+    const result = await store.bulkMark([1, 2], true)
+
+    expect(result).toBe(false)
   })
 
   it('toggleSelect adds/removes from selectedIds', () => {

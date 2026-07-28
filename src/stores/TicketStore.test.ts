@@ -137,6 +137,15 @@ describe('useTicketStore', () => {
     expect(api.delete).toHaveBeenCalledWith('/tickets/1')
   })
 
+  it('handles delete error', async () => {
+    vi.mocked(api.delete).mockRejectedValueOnce(new Error('Network error'))
+
+    const store = useTicketStore()
+    const result = await store.remove(999)
+
+    expect(result).toBe(false)
+  })
+
   it('updates ticket', async () => {
     vi.mocked(api.put).mockResolvedValueOnce({ data: { data: { ...mockTickets[0], subject: 'به‌روز شده' } } })
 

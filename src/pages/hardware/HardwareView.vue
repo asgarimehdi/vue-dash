@@ -112,6 +112,7 @@ function toggleSelectAll() {
     <HardwareTable
       @toggle-select-all="toggleSelectAll"
       @open-edit="openEdit"
+      @error="(msg: string) => error = msg"
     />
 
     <!-- Modal -->

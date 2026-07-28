@@ -49,14 +49,11 @@ async function handleAssign() {
   if (!ticket.value || !assignUserId.value) return
   assigning.value = true
   actionError.value = ''
-  try {
-    const result = await store.assign(ticket.value.id, Number(assignUserId.value))
-    if (result) ticket.value = result
-    else actionError.value = 'خطا در ارجاع تیکت'
-    assignUserId.value = ''
-  } finally {
-    assigning.value = false
-  }
+  const result = await store.assign(ticket.value.id, Number(assignUserId.value))
+  if (result) ticket.value = result
+  else actionError.value = 'خطا در ارجاع تیکت'
+  assignUserId.value = ''
+  assigning.value = false
 }
 </script>
 

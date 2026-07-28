@@ -8,6 +8,7 @@ const store = useHardwareStore()
 const emit = defineEmits<{
   (e: 'toggle-select-all'): void
   (e: 'open-edit', id: number): void
+  (e: 'error', msg: string): void
 }>()
 
 const sortField = (field: string) => store.setSort(field)
@@ -20,7 +21,7 @@ function sortIcon(field: string): string {
 async function removeOne(id: number) {
   if (!confirm('آیا از حذف این آیتم اطمینان دارید؟')) return
   const ok = await store.remove(id)
-  if (!ok) return
+  if (!ok) { emit('error', 'خطا در حذف آیتم'); return }
   await store.fetchList()
 }
 
